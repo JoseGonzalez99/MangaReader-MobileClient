@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "MangaReader",
-    "slug": "MangaReader",
+    "slug": "mangareader",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -36,6 +36,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "3bd59b2e-0efc-4747-a8d6-dfb8e2d7e6b7"
+      }
+    },
+    "owner": "josego99"
   }
 }
