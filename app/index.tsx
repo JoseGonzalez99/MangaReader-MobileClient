@@ -1,17 +1,26 @@
-import { Text, View } from "react-native";
-import { verifyInstallation } from 'nativewind';
+import BigCoverCard from "@/components/atoms/BigCoverCard";
+import BottomDrawer from "@/components/atoms/BottomDrawer";
+import { useState } from "react";
+import { Button, Text, View } from "react-native";
 export default function Index() {
-      // Ensure to call inside a component, not globally
-      verifyInstallation();
+  const [showParamsDrawer, setShowParamsDrawer] = useState(false);
+  /*Funciones de utilidad */
+  const toggleReaderParamDrawer = () => {
+    setShowParamsDrawer(!showParamsDrawer);
+  };
+
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
+    <View>
+      <Button onPress={toggleReaderParamDrawer} title="toggle"></Button>
+    
+      <BottomDrawer
+        isVisible={showParamsDrawer}
+        onClose={toggleReaderParamDrawer}
+      >
+        <View>
+          <Text className="text-white">Hola desde el drawer ✨</Text>
+        </View>
+      </BottomDrawer>
     </View>
   );
 }
