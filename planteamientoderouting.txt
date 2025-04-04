@@ -1,0 +1,41 @@
+/app
+├── (tabs)/
+│   ├── home/  #Ventana que sera la pantalla principal
+│   ├── library/ #Ventana que sera una pantlla para realizar una busqueada o ver la lista de mangas
+│   └── profile/ #Ventana en el que se muesta inforamcion del usaurio, y ciertas configuraciones
+│
+├── (manga)/
+│   ├── [mangaId]/index.tsx # Ventana de perfil de manga
+│   └── volume/[volumeId].tsx # Ventana de perfil de volumen
+│   └── _layout.tsx 
+│
+├── reader/
+│   └── [chapterId].tsx  # Venta de lector, esta vista esta enfocada en proveer una visualizacion comoda de las paginas de un capitulo
+├── login/
+│   └── index.tsx #ventana donde se permitira iniciar sesion o registrarse
+│
+└── _layout.tsx
+
+
+LOGIN Y REGISTRO
+
+Si hazlo pero quiero que  lo hagmoas de la siguietne forma.
+Separemos la vista de login  con;
+1- Campo de ingresasr email
+2- Campo de contraseña
+3- Boton de iniciar sesion
+4- Boton de iniciar sesion con google
+5- Link para ir a la pagina de registrarse
+
+Vista de Registrarse
+1- Campo de nombre completo
+2-Campo de contraseña
+3-Campo de contraseña nuevamente
+4- Boton de registrarme
+5- Registrarme con Google.
+6- Link para volver a la pagina de login.
+
+
+Usar React Hook Form + yup
+
+El consumo de de la api deb

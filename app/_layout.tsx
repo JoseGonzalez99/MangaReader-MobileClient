@@ -11,9 +11,12 @@ export default function RootLayout() {
       <StatusBar style="light" backgroundColor={colors.background} translucent={false} />
       <Stack
         screenOptions={{
-          headerShown: false,
+          headerShown: true,
         }}
-      />
+      >
+        <Stack.Screen name="(tabs)" options={{headerShown:true}}/>
+        <Stack.Screen name="login" options={{headerShown:true}}/>
+        </Stack>
     </>
   );
 }
