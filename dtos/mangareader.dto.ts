@@ -84,11 +84,13 @@ export interface  Preferences{
 
 export interface ReadingEntry{
     mangaId:string;
+    mangaTitle:string;
+    coverUrl:string;
+    faviconUrl:string;
     chapterId:string;
     lastPageRead:number;
     lastReadAt:string;
     status:string;
-    tags?:string[];
 }
 
 export interface AppUser{

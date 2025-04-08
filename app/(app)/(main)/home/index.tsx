@@ -1,86 +1,46 @@
-import BigCoverCard from "@/components/atoms/BigCoverCard";
-import SmallCoverCard from "@/components/atoms/SmallCoverCard";
-import { colors } from "@/constants/colors";
-import { View ,Text, ScrollView, FlatList} from "react-native";
+import BigCoverCard from '@/components/atoms/BigCoverCard';
+import SmallCoverCard from '@/components/atoms/SmallCoverCard';
+import { ReadingEntry } from '@/dtos/mangareader.dto';
+import { ScrollView, FlatList, View, Text } from 'react-native';
 
 export default function HomeScreen() {
-    return (
-        <ScrollView style={styles.container}>
-        <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Último leído</Text>
-            <BigCoverCard {...homevalue.lastReaded} />
-        </View>
-        <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Historial</Text>
-            <FlatList
-                data={homevalue.historial}
-                renderItem={({ item }) => <SmallCoverCard {...item} />}
-                keyExtractor={(item, index) => index.toString()}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-            />
-        </View>
+  const lastRead: ReadingEntry = {
+    mangaId: 'a6c84040-cfcd-4a6f-b005-643b96385281',
+    mangaTitle: 'Berserk',
+    coverUrl: 'https://www.nippon.com/es/ncommon/contents/japan-topics/1261990/1261990.jpg',
+    faviconUrl: 'https://i.pinimg.com/736x/c3/92/e9/c392e9650f94bbec2be33c53bbea1f95.jpg',
+    chapterId: '64fa9123-4b15-4640-afbf-470587d7bd57',
+    lastPageRead: 1,
+    lastReadAt: '2025-04-07T14:35:39.585Z',
+    status: 'IN_PROGRESS',
+  };
+
+  const history: ReadingEntry[] = [lastRead];
+
+  return (
+    <ScrollView className=" bg-background px-4 pt-6">
+      <View className="mb-10">
+        <Text className="text-2xl font-bold text-white mb-5">Último leído</Text>
+        <BigCoverCard
+          title={lastRead.mangaTitle}
+          rating={10}
+          image={lastRead.coverUrl}
+        />
+      </View>
+
+      <View className="mb-10">
+        <Text className="text-2xl font-bold text-white mb-5">Historial</Text>
+        <FlatList
+          data={history}
+          renderItem={({ item }) => (
+            <SmallCoverCard title={item.mangaTitle} image={item.coverUrl} />
+          )}
+          keyExtractor={(_, index) => index.toString()}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ gap: 12 }}
+        />
+      </View>
     </ScrollView>
-    )
+  );
 }
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		padding: 10,
-		backgroundColor: colors.background,
-	},
-	section: {
-		marginBottom: 40,
-	},
-	sectionTitle: {
-		fontSize: 25,
-		fontWeight: 'bold',
-		marginBottom: 20,
-		color: colors.text,
-	},
-	bigCard: {
-		height: 250,
-		borderRadius: 10,
-		overflow: 'hidden',
-		justifyContent: 'flex-end',
-	},
-	smallCard: {
-		height: 150,
-		width: 100,
-		borderRadius: 10,
-		overflow: 'hidden',
-		marginRight: 10,
-		justifyContent: 'flex-end',
-	},
-	cardImage: {
-		borderRadius: 10,
-	},
-	bigCardContent: {
-		backgroundColor: 'rgba(0, 0, 0, 0.5)',
-		padding: 10,
-	},
-	smallCardContent: {
-		backgroundColor: 'rgba(0, 0, 0, 0.5)',
-		padding: 5,
-	},
-	bigCardTitle: {
-		fontSize: 20,
-		fontWeight: 'bold',
-		color: '#fff',
-	},
-	smallCardTitle: {
-		fontSize: 14,
-		color: '#fff',
-	},
-	ratingContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
-	},
-	bigCardRating: {
-		fontSize: 14,
-		color: '#fff',
-		marginLeft: 5,
-	},
-})
-
