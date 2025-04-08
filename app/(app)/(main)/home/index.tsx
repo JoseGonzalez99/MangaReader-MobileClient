@@ -10,7 +10,7 @@ export default function HomeScreen() {
 	const lastRead: ReadingEntry = {
 		mangaId: "a6c84040-cfcd-4a6f-b005-643b96385281",
 		mangaTitle: "Berserk",
-		coverUrl: "https://www.nippon.com/es/ncommon/contents/japan-topics/1261990/1261990.jpg",
+		coverUrl: "https://mrwallpaper.com/images/hd/download-berserk-wallpaper-xuc3lwbexky9xyz1.jpg",
 		faviconUrl: "https://i.pinimg.com/736x/c3/92/e9/c392e9650f94bbec2be33c53bbea1f95.jpg",
 		chapterId: "64fa9123-4b15-4640-afbf-470587d7bd57",
 		lastPageRead: 1,
@@ -19,9 +19,36 @@ export default function HomeScreen() {
 	};
 
 	const history: ReadingEntry[] = [
-		lastRead,
-		lastRead,
-		lastRead,
+		{
+			mangaId: "a6c84040-cfcd-4a6f-b005-643b96385282",
+			mangaTitle: "Attack on Titan",
+			coverUrl: "https://4.bp.blogspot.com/-bFI3nnZiBy4/WIpe-AqSKqI/AAAAAAAAALs/25vg-stsz2oTUVVP7-11HqHJZxMGwYNwgCEw/s1600/shingeki_no_kyojin_poster_by_thebellealexandra-d75f1z1.png",
+			faviconUrl: "https://i.pinimg.com/736x/c3/92/e9/c392e9650f94bbec2be33c53bbea1f95.jpg",
+			chapterId: "64fa9123-4b15-4640-afbf-470587d7bd57",
+			lastPageRead: 1,
+			lastReadAt: "2025-04-07T14:35:39.585Z",
+			status: "IN_PROGRESS"
+		},
+		{
+			mangaId: "a6c84040-cfcd-4a6f-b005-643b963852232",
+			mangaTitle: "Naruto",
+			coverUrl: "https://th.bing.com/th/id/OIP.EjIl-g-wSybkVtNApisWMwHaLH?rs=1&pid=ImgDetMain",
+			faviconUrl: "https://i.pinimg.com/736x/c3/92/e9/c392e9650f94bbec2be33c53bbea1f95.jpg",
+			chapterId: "64fa9123-4b15-4640-afbf-470587d7bd57",
+			lastPageRead: 1,
+			lastReadAt: "2025-04-07T14:35:39.585Z",
+			status: "IN_PROGRESS"
+		},
+		{
+			mangaId: "a6c84040-cfcd-4a6f-b005-6e22963852232",
+			mangaTitle: "Bleach",
+			coverUrl: "https://th.bing.com/th/id/R.98dffbb5e325f0b41c817bda7bd9cda2?rik=11AIeHrwXfNO2A&riu=http%3a%2f%2fes.web.img3.acsta.net%2fr_1280_720%2fpictures%2f16%2f02%2f03%2f17%2f47%2f271248.jpg&ehk=1TFFCPiuhlVB70HSMlpD0YbCZzMEraquP3KvYGjjUmw%3d&risl=&pid=ImgRaw&r=0",
+			faviconUrl: "https://i.pinimg.com/736x/c3/92/e9/c392e9650f94bbec2be33c53bbea1f95.jpg",
+			chapterId: "64fa9123-4b15-4640-afbf-470587d7bd57",
+			lastPageRead: 1,
+			lastReadAt: "2025-04-07T14:35:39.585Z",
+			status: "IN_PROGRESS"
+		},
 		lastRead
 	];
 
