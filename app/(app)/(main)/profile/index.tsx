@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router'
 import React, { useState } from 'react'
 import { View, Text, Pressable, Alert, Modal } from 'react-native'
 
@@ -6,6 +7,7 @@ export default function ProfileScreen() {
   const [defaultProvider, setDefaultProvider] = useState('MangaPlus')
   const [isDirectionPickerVisible, setDirectionPickerVisible] = useState(false)
   const [isProviderPickerVisible, setProviderPickerVisible] = useState(false)
+const router = useRouter();
 
   const readingOptions = [
     { label: 'Izquierda a derecha', value: 'ltr' },
@@ -16,7 +18,7 @@ export default function ProfileScreen() {
   const providerOptions = ['MangaPlus', 'ComicWorld', 'WebtoonX', 'Otro']
 
   const handleLogout = () => {
-    Alert.alert('Cerrar sesión', 'Se ha cerrado la sesión.')
+    router.push(`/(auth)/login`);
   }
 
   const handleDeleteAccount = () => {

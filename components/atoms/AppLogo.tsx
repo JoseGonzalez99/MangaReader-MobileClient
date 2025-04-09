@@ -14,7 +14,7 @@ const AppLogo = ({ imageUrl, subText }: AppLogoProps) => {
         className="w-[250px] h-[250px] mb-0"
         resizeMode="contain"
       />
-      <Text className="text-text text-3xl font-bold">{subText}</Text>
+      <Text className="text-text text-4xl font-bold">{subText}</Text>
     </View>
   )
 }

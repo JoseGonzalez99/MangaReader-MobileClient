@@ -1,10 +1,20 @@
-import { Redirect } from "expo-router";
-import { useAuthContext } from "@/contexts/AuthContext";
+// app/(auth)/_layout.tsx
+import { Stack, useRouter } from 'expo-router';
+import { useEffect } from 'react';
+import { useAuthContext } from '@/contexts/AuthContext';
 
 export default function AuthLayout() {
   const { isAuthenticated, loading } = useAuthContext();
+  const router = useRouter();
 
-  if (loading) return null;
-  if (isAuthenticated) return <Redirect href="/home" />;
-  else <Redirect href="/register" />;
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      router.replace('/login');
+    }
+  }, [isAuthenticated, loading]);
+
+  return <Stack
+      screenOptions={{
+        headerShown:false
+      }} />
 }

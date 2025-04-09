@@ -1,16 +1,31 @@
-import { Slot } from 'expo-router';
-import { AuthProvider } from '@/contexts/AuthContext';
-import React from 'react';
-import { verifyInstallation } from 'nativewind';
-
-import "../global.css"
-
+// app/_layout.tsx
+import { Slot, useRouter } from 'expo-router';
+import { useEffect } from 'react';
+import { AuthProvider, useAuthContext } from '@/contexts/AuthContext';
+import '@/global.css'
 export default function RootLayout() {
-     // Ensure to call inside a component, not globally
-     verifyInstallation();
   return (
     <AuthProvider>
-      <Slot  />
+      <AppNavigator />
     </AuthProvider>
   );
+}
+
+function AppNavigator() {
+  const { isAuthenticated, loading } = useAuthContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading) {
+      if (isAuthenticated) {
+        router.replace('/home'); // o cualquier ruta inicial protegida
+      } else {
+        router.replace('/login');
+      }
+    }
+  }, [loading, isAuthenticated]);
+
+  if (loading) return null;
+
+  return <Slot />;
 }

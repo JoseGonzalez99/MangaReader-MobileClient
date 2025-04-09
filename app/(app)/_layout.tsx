@@ -1,16 +1,19 @@
-import { Redirect, Stack } from 'expo-router';
+// app/(app)/_layout.tsx
+import { Stack, useRouter } from 'expo-router';
+import { useEffect } from 'react';
 import { useAuthContext } from '@/contexts/AuthContext';
-import { colors } from '@/constants/colors';
 
-export default function AppProtectedLayout() {
+export default function ProtectedLayout() {
   const { isAuthenticated, loading } = useAuthContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      router.replace('/login');
+    }
+  }, [isAuthenticated, loading]);
 
   if (loading) return null;
-  if (!isAuthenticated) return <Redirect href="/login" />;
 
-  return <Stack screenOptions={{
-    headerShown:false,
-    statusBarHidden:true
-  }}
-      />;
+  return <Stack />;
 }

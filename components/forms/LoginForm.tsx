@@ -32,14 +32,14 @@ export default function LoginForm() {
   };
 
   return (
-    <View className="px-6 gap-2">
+    <View className="px-12 gap-2">
       <Controller
         control={control}
         name="email"
         render={({ field: { onChange, value } }) => (
           <TextInput
             placeholder="Email"
-            className="bg-secondary px-4 py-2 text-white rounded-xl"
+            className="bg-secondary px-4 py-3 text-white rounded-xl"
             placeholderTextColor="#ccc"
             onChangeText={onChange}
             value={value}
@@ -55,7 +55,7 @@ export default function LoginForm() {
         render={({ field: { onChange, value } }) => (
           <TextInput
             placeholder="Contraseña"
-            className="bg-secondary px-4 py-2 text-white rounded-xl"
+            className="bg-secondary px-4 py-3 text-white rounded-xl"
             placeholderTextColor="#ccc"
             onChangeText={onChange}
             value={value}

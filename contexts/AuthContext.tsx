@@ -2,6 +2,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import { useAuth } from '../hooks/useAuth';
+import { useRouter } from 'expo-router';
+import { isTokenValid } from '@/helpers/validateJwt';
 
 interface AuthContextProps {
   isAuthenticated: boolean;
@@ -17,15 +19,45 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { login, logout, register, loading, error } = useAuth();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const router = useRouter();
 
   const checkToken = async () => {
     const token = await SecureStore.getItemAsync('accessToken');
-    setIsAuthenticated(!!token);
+  
+    if (token) {
+      const valid = isTokenValid(token);
+      console.log('🧾 Token valid:', valid);
+      if (valid) {
+        setIsAuthenticated(true);
+      } else {
+        console.log('⛔️ Token expirado. Limpiando...');
+        await SecureStore.deleteItemAsync('accessToken');
+        setIsAuthenticated(false);
+      }
+    } else {
+      console.log('🔍 No hay token en SecureStore');
+      setIsAuthenticated(false);
+    }
   };
+  
 
   useEffect(() => {
     checkToken();
   }, []);
+
+  useEffect(() => {
+    const printToken= async () =>{
+      const token = await SecureStore.getItemAsync('accessToken');
+
+      console.log('[AuthLayout] token:', token);
+    }
+  console.log('[AuthLayout] isAuthenticated:', isAuthenticated);
+  printToken()
+  if (!loading && isAuthenticated) {
+    router.replace('/home');
+  }
+}, [isAuthenticated, loading]);
+
 
   const handleLogin = async (email: string, password: string) => {
     await login(email, password);
