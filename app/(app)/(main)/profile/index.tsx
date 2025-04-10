@@ -1,3 +1,4 @@
+import { useAuthContext } from '@/contexts/AuthContext'
 import { useRouter } from 'expo-router'
 import React, { useState } from 'react'
 import { View, Text, Pressable, Alert, Modal } from 'react-native'
@@ -8,6 +9,7 @@ export default function ProfileScreen() {
   const [isDirectionPickerVisible, setDirectionPickerVisible] = useState(false)
   const [isProviderPickerVisible, setProviderPickerVisible] = useState(false)
 const router = useRouter();
+const { logout } = useAuthContext();
 
   const readingOptions = [
     { label: 'Izquierda a derecha', value: 'ltr' },
@@ -17,9 +19,11 @@ const router = useRouter();
 
   const providerOptions = ['MangaPlus', 'ComicWorld', 'WebtoonX', 'Otro']
 
-  const handleLogout = () => {
-    router.push(`/(auth)/login`);
+  const handleLogout = async () => {
+    await logout()
+    router.replace('/(auth)/login') // ✅ navegación segura después de logout
   }
+
 
   const handleDeleteAccount = () => {
     Alert.alert('Eliminar cuenta', 'Tu cuenta ha sido eliminada.')

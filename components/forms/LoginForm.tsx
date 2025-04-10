@@ -21,12 +21,12 @@ export default function LoginForm() {
   const onSubmit = async (data: LoginDTO) => {
     try {
       await login(data.email,data.password);
-      router.replace('/home');
+      router.replace('/');//Regresamos al root
     } catch (error) {
       if (error instanceof ApiException) {
         alert(error.message);
       } else {
-        alert('Error desconocido');
+        alert('Error desconocido'+ error);
       }
     }
   };
