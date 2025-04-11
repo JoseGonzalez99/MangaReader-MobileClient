@@ -1,6 +1,5 @@
 // app/(app)/_layout.tsx
-import { Redirect, Stack, useRouter } from 'expo-router';
-import { useEffect } from 'react';
+import { Redirect, Stack } from 'expo-router';
 import { useAuthContext } from '@/contexts/AuthContext';
 
 export default function ProtectedLayout() {
@@ -11,7 +10,7 @@ export default function ProtectedLayout() {
 
 
     // ✅ Redirección segura
-    if (!isAuthenticated) return <Redirect href="/(auth)/login" />;
+    if (isAuthenticated==false) return <Redirect href="/(auth)/login" />;
   
 
   return <Stack

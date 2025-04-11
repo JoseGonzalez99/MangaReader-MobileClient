@@ -5,43 +5,30 @@ import { ApiException } from '@/apis/ReaderBackend/core/types';
 
 
 export const useAuth = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<ApiException | null>(null);
 
   const login = async (email: string, password: string) => {
-    setLoading(true);
-    setError(null);
     try {
       await loginApi({ email, password });
     } catch (err) {
-      if (err instanceof ApiException) setError(err);
-      else console.error('Unexpected error:', err);
-    } finally {
-      setLoading(false);
+      throw err;
     }
   };
 
   const logout = async () => {
-    setLoading(true);
-    setError(null);
+
     try {
       await logoutApi();
     } catch (err) {
-      if (err instanceof ApiException) setError(err);
-    } finally {
-      setLoading(false);
+      throw err;
     }
   };
 
   const register = async (email: string, password: string) => {
-    setLoading(true);
-    setError(null);
+
     try {
       await registerApi({ email, password });
     } catch (err) {
-      if (err instanceof ApiException) setError(err);
-    } finally {
-      setLoading(false);
+      throw err;
     }
   };
 
@@ -49,7 +36,5 @@ export const useAuth = () => {
     login,
     logout,
     register,
-    loading,
-    error,
   };
 };

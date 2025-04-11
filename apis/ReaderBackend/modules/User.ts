@@ -1,8 +1,21 @@
-import { Preferences, ReadingEntry } from "@/dtos/mangareader.dto";
+import { AppUser, Preferences, ReadingEntry } from "@/dtos/mangareader.dto";
 import { mainApiRequest } from "../core/helpers";
 import { ApiSuccessResponse } from "../core/types";
 
-export const getReadingHistory = async (): Promise<
+
+
+export const userInfoApi = async (): Promise<
+  ApiSuccessResponse<AppUser>
+> => {
+  const response = await mainApiRequest<AppUser>({
+    url: `/me`,
+    method: "GET",
+  });
+  return response;
+};
+
+
+export const userReadingHistoryApi = async (): Promise<
   ApiSuccessResponse<ReadingEntry[]>
 > => {
   const response = await mainApiRequest<ReadingEntry[]>({
@@ -12,7 +25,7 @@ export const getReadingHistory = async (): Promise<
   return response;
 };
 
-export const getLastRead = async (): Promise<
+export const userLastReadApi = async (): Promise<
   ApiSuccessResponse<ReadingEntry>
 > => {
   const response = await mainApiRequest<ReadingEntry>({
@@ -22,7 +35,7 @@ export const getLastRead = async (): Promise<
   return response;
 };
 
-export const getPreferences = async (): Promise<
+export const userPreferencesApi = async (): Promise<
   ApiSuccessResponse<Preferences>
 > => {
   const response = await mainApiRequest<Preferences>({
@@ -32,7 +45,7 @@ export const getPreferences = async (): Promise<
   return response;
 };
 
-export const updatePreferences = async (
+export const userUpdatePreferenceApi = async (
   body: Preferences
 ): Promise<ApiSuccessResponse<Preferences>> => {
   const response = await mainApiRequest<Preferences>({
