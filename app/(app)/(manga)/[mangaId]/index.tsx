@@ -6,18 +6,24 @@ import {
   FlatList,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import SmallCoverCard from "@/components/atoms/SmallCoverCard";
-import { Volume } from "@/dtos/mangareader.dto";
+import { Manga, Volume } from "@/dtos/mangareader.dto";
 import Animated, { useAnimatedScrollHandler } from "react-native-reanimated";
 import { useScrollY } from "@/hooks/useScrollY";
+import { useContent } from "@/hooks/useContent";
 const MangaDetailScreen = () => {
   const { mangaId } = useLocalSearchParams<{ mangaId: string }>();
   const router = useRouter();
   const scrollY = useScrollY();
   const [isFavorite, setIsFavorite] = useState(false);
+    const { fetchManga,fetchVolumes, contentError, contentLoading } = useContent();
+  
+    const [selectedManga, setSelectedManga] = useState<Manga|null>(null);
+    const [volumes, setVolumes] = useState<Volume[]>([]);
+
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -25,18 +31,32 @@ const MangaDetailScreen = () => {
     },
   });
 
-  const volumes: Volume[] = [
-    {
-      id: "1",
-      mangaId: mangaId,
-      volumeNumber: 1,
-      title: "Volumen 1 - Arco de la destrucción",
-      coverUrl:
-        "https://www.nippon.com/es/ncommon/contents/japan-topics/1261990/1261990.jpg",
-      createdAt: "",
-      updatedAt: "",
-    },
-  ];
+    // Obtener mangas al renderizar
+    useEffect(() => {
+      const getMangaInfo = async () => {
+        try {
+          const manga: Manga|null = await fetchManga(mangaId);
+          setSelectedManga(manga);
+          
+        } catch (e) {
+          console.error("Error fetching mangas:", e);
+        }
+      };
+      const getVolumes = async () => {
+        try {
+          const volumenes: Volume[] = await fetchVolumes(mangaId);
+          setVolumes(volumenes);
+          
+        } catch (e) {
+          console.error("Error fetching mangas:", e);
+        }
+      };
+     getMangaInfo();
+     getVolumes();
+
+    }, []);
+
+
 
   const handleRead = () => {
     // lógica para continuar o comenzar lectura
@@ -59,7 +79,7 @@ const MangaDetailScreen = () => {
       <View className=" pt-20  relative rounded-2xl overflow-hidden">
         <Image
           source={{
-            uri: "https://mrwallpaper.com/images/hd/download-berserk-wallpaper-xuc3lwbexky9xyz1.jpg",
+            uri: selectedManga?.coverUrl,
           }}
           className="h-[220px] rounded-2xl"
           resizeMode="stretch"
@@ -69,15 +89,18 @@ const MangaDetailScreen = () => {
           className="absolute inset-0"
         />
         <View className="absolute bottom-3 left-4">
-          <Text className="text-white text-4xl font-extrabold">Berserk</Text>
+          <Text className="text-white text-4xl font-extrabold">{selectedManga?.title}</Text>
           <View className="flex flex-row">
-            <View className="flex-row items-center pr-4">
+            {selectedManga?.rating!=null &&
+            (  <View className="flex-row items-center pr-4">
               <FontAwesome name="star" size={14} color="gold" />
-              <Text className="text-white ml-1">7.9</Text>
-            </View>
+              <Text className="text-white ml-1">{}</Text>
+            </View>)
+            }
+          
             <View className="flex-row items-center">
               <FontAwesome name="eye" size={14} color="white" />
-              <Text className="text-white ml-1">89,200</Text>
+              <Text className="text-white ml-1">Chapers: {selectedManga?.chaptersCount}</Text>
             </View>
           </View>
         </View>
@@ -104,10 +127,7 @@ const MangaDetailScreen = () => {
 
       <Text className="text-white text-3xl font-bold mt-4 mb-2">Sinopsis</Text>
       <Text className="bg-neutral-800 text-lg text-white p-4 rounded-xl">
-        Berserk es una historia de fantasía oscura y terror que sigue a Guts, un
-        espadachín solitario y maldito. La trama se desarrolla en un mundo donde
-        la fuerza es lo más importante.
-        {mangaId}
+        {selectedManga?.description}
       </Text>
 
       <Text className="text-white text-3xl font-bold mt-8 mb-2">Volúmenes</Text>

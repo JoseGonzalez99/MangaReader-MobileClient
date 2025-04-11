@@ -32,7 +32,7 @@ export default function HomeScreen() {
 
   const handleMangaLastReadPress = (entry: ReadingEntry) => {
     // Aquí podrías navegar a un lector o detalles
-    router.push(`/(app)/(manga)`);
+    router.push(`/(app)/(manga)/${entry.mangaId}`);
   };
   const handleMangaPress = (entry: ReadingEntry) => {
     if (entry?.chapterId) {

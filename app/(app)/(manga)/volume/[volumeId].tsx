@@ -1,7 +1,9 @@
 // app/(app)/(manga)/volume/[volumeId].tsx
 import { View, Text, Image, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { Chapter } from '@/dtos/mangareader.dto';
+import { Chapter, Volume } from '@/dtos/mangareader.dto';
+import { useEffect, useState } from 'react';
+import { useContent } from '@/hooks/useContent';
 
 
 
@@ -9,35 +11,38 @@ import { Chapter } from '@/dtos/mangareader.dto';
 
 export default function VolumenScreen() {
   const router = useRouter();
-  const { volumeId } = useLocalSearchParams();
+  const { volumeId } = useLocalSearchParams<{volumeId:string}>();
 
-  const chapters:Chapter[] = [
-    {
-      id: '1067',
-      volumeId:volumeId as unknown as string,
-      chapterNumber:1067,
-      title: 'Capitulo 1067',
-      createdAt:"",
-      updatedAt:""
-    }
-    ,
-    {
-      id: '1068',
-      volumeId:volumeId as unknown as string,
-      chapterNumber:1068,
-      title: 'Capitulo 1068',
-      createdAt:"",
-      updatedAt:""
-    },
-    {
-      id: '1069',
-      volumeId:volumeId as unknown as string,
-      chapterNumber:1069,
-      title: 'Capitulo 1069',
-      createdAt:"",
-      updatedAt:""
-    }
-  ];
+    const { fetchVolume,fetchChapterByVolume, contentError, contentLoading } = useContent();
+  
+    const [selectedVolume, setSelectedVolume] = useState<Volume|null>(null);
+    const [chapters, setChapters] = useState<Chapter[]>([]);
+
+
+    // Obtener mangas al renderizar
+    useEffect(() => {
+      const getVolumenInfo = async () => {
+        try {
+          const volume: Volume|null = await fetchVolume(volumeId);
+          setSelectedVolume(volume);
+          
+        } catch (e) {
+          console.error("Error fetching mangas:", e);
+        }
+      };
+      const getVolumes = async () => {
+        try {
+          const chaps: Chapter[] = await fetchChapterByVolume(volumeId);
+          setChapters(chaps);
+          
+        } catch (e) {
+          console.error("Error fetching mangas:", e);
+        }
+      };
+      getVolumenInfo();
+     getVolumes();
+
+    }, []);
 
   const handleChapterTouch = (entry: Chapter) => {
     router.push(`/(app)/reader/${entry.id}`);
@@ -46,12 +51,12 @@ export default function VolumenScreen() {
   return (
     <View className="flex-1 bg-black">
       <Image
-        source={{ uri: 'https://www.nippon.com/es/ncommon/contents/japan-topics/1261990/1261990.jpg' }} // Aquí va la portada del volumen
+        source={{ uri: selectedVolume?.coverUrl }} // Aquí va la portada del volumen
         className="w-full h-60"
         resizeMode="cover"
       />
       <Text className="text-white text-center text-3xl font-bold mt-2">
-        Volumen {volumeId}
+        Volumen {selectedVolume?.volumeNumber}
       </Text>
 
       <Text className="text-white text-2xl font-bold mt-4 ml-4">Chapters</Text>
@@ -71,8 +76,8 @@ export default function VolumenScreen() {
             />
         
             <View>
-              <Text className="text-white text-sm">Chapter {item.id}</Text>
-              <Text className="text-primary font-bold">{item.title}</Text>
+            <Text className="text-primary font-bold">{item.title}</Text>
+
             </View>
           </TouchableOpacity>
         )}
