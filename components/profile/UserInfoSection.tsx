@@ -1,21 +1,28 @@
 import { useAuthContext } from '@/contexts/AuthContext'
 import { useRouter } from 'expo-router'
 import { View, Text, Pressable, TextInput, Modal, Alert } from 'react-native'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { BlurView } from 'expo-blur'
+import { useAppStore } from '@/store/Slices'
 
 export default function UserInfoSection() {
-  const { appUser, logout } = useAuthContext()
+ // const { appUser, logout } = useAuthContext()
   const router = useRouter()
 
+  const user = useAppStore((s) => s.appUser);
+  const loading = useAppStore((s) => s.userLoading);
+
+
+  const logout = useAppStore((s) => s.logout);
   const [editing, setEditing] = useState(false)
   const [fullName, setFullName] = useState('admin')
-  const [email, setEmail] = useState(appUser?.email || '')
+  const [email, setEmail] = useState(user?.email || '')
   const [password, setPassword] = useState('')
   const [modalVisible, setModalVisible] = useState(false)
 
   const handleLogout = async () => {
-    await logout()
+    //await logout()
+    logout();
     router.replace('/(auth)/login')
   }
 

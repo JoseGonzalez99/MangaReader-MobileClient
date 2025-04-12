@@ -2,12 +2,14 @@ import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { View, TextInput, Pressable, Text } from 'react-native';
 import { registerSchema, RegisterDTO } from '@/dtos/register.dto';
-import { useAuthContext } from '@/contexts/AuthContext';
 import { useRouter } from 'expo-router';
 import { ApiException } from '@/apis/ReaderBackend/core/types';
+import { useAppStore } from '@/store/Slices';
 
 export default function RegisterForm() {
-  const { register: registerUser } = useAuthContext();
+    const register = useAppStore((s) => s.register);
+  
+
   const router = useRouter();
 
   const {
@@ -20,7 +22,7 @@ export default function RegisterForm() {
 
   const onSubmit = async (data: RegisterDTO) => {
     try {
-      await registerUser(  data.email, data.password );
+      await register(  data.email, data.password );
       router.replace('/home');
     } catch (error) {
       if (error instanceof ApiException) {

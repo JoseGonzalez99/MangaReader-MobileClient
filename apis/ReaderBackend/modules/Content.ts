@@ -29,15 +29,6 @@ type GetAllChapterOfManga= {
   }
 }
 
-//Para obtener los capitulos de un manga
-export const getAllChapterOfManga = async ({mangaId,query}:GetAllChapterOfManga): Promise<ApiSuccessResponse<Chapter[]>> => {
-  const response = await mainApiRequest<Chapter[]>({
-    url: `/public/chapters/by-manga/${mangaId}`,
-    method: 'GET',
-    params:query
-  });
-  return response;
-};
 
 //Para obtener las fuentes de capitulos.
 export const getAvailablesSources = async (mangaId:string): Promise<ApiSuccessResponse<Provider[]>> => {
@@ -50,7 +41,7 @@ export const getAvailablesSources = async (mangaId:string): Promise<ApiSuccessRe
 
 
 //Para obtener los mangas
-export const getMangasApi = async (): Promise<ApiSuccessResponse<Manga[]>> => {
+export const getMangas = async (): Promise<ApiSuccessResponse<Manga[]>> => {
   const response = await mainApiRequest<Manga[]>({
     url: `/mangas`,
     method: 'GET',
@@ -60,7 +51,7 @@ export const getMangasApi = async (): Promise<ApiSuccessResponse<Manga[]>> => {
 
 
 //Busca un manga por su id
-export const getMangasbyIdApi = async (mangaId:string): Promise<ApiSuccessResponse<Manga>> => {
+export const getMangaById = async (mangaId:string): Promise<ApiSuccessResponse<Manga>> => {
   const response = await mainApiRequest<Manga>({
     url: `/mangas/${mangaId}`,
     method: 'GET',
@@ -69,7 +60,7 @@ export const getMangasbyIdApi = async (mangaId:string): Promise<ApiSuccessRespon
 };
 
 //Busca un volumen por su id
-export const getVolumeByIdApi = async (volumeId:string): Promise<ApiSuccessResponse<Volume>> => {
+export const getVolumeById = async (volumeId:string): Promise<ApiSuccessResponse<Volume>> => {
   const response = await mainApiRequest<Volume>({
     url: `/volumes/${volumeId}`,
     method: 'GET',
@@ -78,21 +69,9 @@ export const getVolumeByIdApi = async (volumeId:string): Promise<ApiSuccessRespo
 };
 
 
-
-
-
 //Obtiene los volumenes de un manga
-export const getMangaVolumesApi = async (mangaId:string): Promise<ApiSuccessResponse<Volume[]>> => {
+export const getVolumesByMangaId = async (mangaId:string): Promise<ApiSuccessResponse<Volume[]>> => {
   const response = await mainApiRequest<Volume[]>({
-    url: `/mangas/${mangaId}/volumes`,
-    method: 'GET',
-  });
-  return response;
-};
-
-//Obtiene los capitulos de un manga
-export const getChapterbyMangaApi = async (mangaId:string): Promise<ApiSuccessResponse<Chapter[]>> => {
-  const response = await mainApiRequest<Chapter[]>({
     url: `/mangas/${mangaId}/volumes`,
     method: 'GET',
   });
@@ -101,10 +80,21 @@ export const getChapterbyMangaApi = async (mangaId:string): Promise<ApiSuccessRe
 
 
 //Obtiene los capitulos de un volumen
-export const getChapterbyVolumenApi = async (volumeId:string): Promise<ApiSuccessResponse<Chapter[]>> => {
+export const getChapterbyVolumenId = async (volumeId:string): Promise<ApiSuccessResponse<Chapter[]>> => {
   const response = await mainApiRequest<Chapter[]>({
     url: `/volumes/${volumeId}/chapters`,
     method: 'GET',
+  });
+  return response;
+};
+
+
+//Para obtener los capitulos de un manga 
+export const getAllChapterByMangaId = async ({mangaId,query}:GetAllChapterOfManga): Promise<ApiSuccessResponse<Chapter[]>> => {
+  const response = await mainApiRequest<Chapter[]>({
+    url: `/public/chapters/by-manga/${mangaId}`,
+    method: 'GET',
+    params:query
   });
   return response;
 };

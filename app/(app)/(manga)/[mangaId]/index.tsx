@@ -1,29 +1,23 @@
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  FlatList,
-} from "react-native";
+import { View, Text, Image, TouchableOpacity, FlatList } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import SmallCoverCard from "@/components/atoms/SmallCoverCard";
-import { Manga, Volume } from "@/dtos/mangareader.dto";
+import { Volume } from "@/dtos/mangareader.dto";
 import Animated, { useAnimatedScrollHandler } from "react-native-reanimated";
 import { useScrollY } from "@/hooks/useScrollY";
-import { useContent } from "@/hooks/useContent";
+import { useAppStore } from "@/store/Slices";
 const MangaDetailScreen = () => {
   const { mangaId } = useLocalSearchParams<{ mangaId: string }>();
   const router = useRouter();
   const scrollY = useScrollY();
   const [isFavorite, setIsFavorite] = useState(false);
-    const { fetchManga,fetchVolumes, contentError, contentLoading } = useContent();
-  
-    const [selectedManga, setSelectedManga] = useState<Manga|null>(null);
-    const [volumes, setVolumes] = useState<Volume[]>([]);
-
+  /*Lista de estados globales */
+  const selectedManga = useAppStore((s) => s.selectedManga);
+  const setSelectedVolume = useAppStore((s) => s.setSelectedVolume);
+  const fetchVolumesByMangaId = useAppStore((s) => s.fetchVolumesByMangaId);
+  const volumesOfSelectedManga = useAppStore((s) => s.volumesOfSelectedManga);
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -31,32 +25,17 @@ const MangaDetailScreen = () => {
     },
   });
 
-    // Obtener mangas al renderizar
-    useEffect(() => {
-      const getMangaInfo = async () => {
-        try {
-          const manga: Manga|null = await fetchManga(mangaId);
-          setSelectedManga(manga);
-          
-        } catch (e) {
-          console.error("Error fetching mangas:", e);
-        }
-      };
-      const getVolumes = async () => {
-        try {
-          const volumenes: Volume[] = await fetchVolumes(mangaId);
-          setVolumes(volumenes);
-          
-        } catch (e) {
-          console.error("Error fetching mangas:", e);
-        }
-      };
-     getMangaInfo();
-     getVolumes();
-
-    }, []);
-
-
+  // Obtener mangas al renderizar
+  useEffect(() => {
+    const getVolumes = async () => {
+      try {
+        await fetchVolumesByMangaId(mangaId);
+      } catch (e) {
+        console.error("Error fetching mangas:", e);
+      }
+    };
+    getVolumes();
+  }, []);
 
   const handleRead = () => {
     // lógica para continuar o comenzar lectura
@@ -67,6 +46,7 @@ const MangaDetailScreen = () => {
   };
 
   const handleVolumenTouch = (entry: Volume) => {
+    setSelectedVolume(entry);
     router.push(`/(app)/(manga)/volume/${entry.id}`);
   };
 
@@ -89,18 +69,22 @@ const MangaDetailScreen = () => {
           className="absolute inset-0"
         />
         <View className="absolute bottom-3 left-4">
-          <Text className="text-white text-4xl font-extrabold">{selectedManga?.title}</Text>
+          <Text className="text-white text-4xl font-extrabold">
+            {selectedManga?.title}
+          </Text>
           <View className="flex flex-row">
-            {selectedManga?.rating!=null &&
-            (  <View className="flex-row items-center pr-4">
-              <FontAwesome name="star" size={14} color="gold" />
-              <Text className="text-white ml-1">{}</Text>
-            </View>)
-            }
-          
+            {selectedManga?.rating != null && (
+              <View className="flex-row items-center pr-4">
+                <FontAwesome name="star" size={14} color="gold" />
+                <Text className="text-white ml-1">{}</Text>
+              </View>
+            )}
+
             <View className="flex-row items-center">
               <FontAwesome name="eye" size={14} color="white" />
-              <Text className="text-white ml-1">Chapers: {selectedManga?.chaptersCount}</Text>
+              <Text className="text-white ml-1">
+                Chapers: {selectedManga?.chaptersCount}
+              </Text>
             </View>
           </View>
         </View>
@@ -132,7 +116,7 @@ const MangaDetailScreen = () => {
 
       <Text className="text-white text-3xl font-bold mt-8 mb-2">Volúmenes</Text>
       <FlatList
-        data={volumes}
+        data={volumesOfSelectedManga}
         horizontal
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item) => item.id}

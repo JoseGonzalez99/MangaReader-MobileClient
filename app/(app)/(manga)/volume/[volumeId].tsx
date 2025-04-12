@@ -1,50 +1,32 @@
 // app/(app)/(manga)/volume/[volumeId].tsx
 import { View, Text, Image, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { Chapter, Volume } from '@/dtos/mangareader.dto';
-import { useEffect, useState } from 'react';
-import { useContent } from '@/hooks/useContent';
-
-
-
+import { Chapter } from '@/dtos/mangareader.dto';
+import { useEffect } from 'react';
+import { useAppStore } from '@/store/Slices';
 
 
 export default function VolumenScreen() {
   const router = useRouter();
-  const { volumeId } = useLocalSearchParams<{volumeId:string}>();
+  const { volumeId } = useLocalSearchParams<{ volumeId: string }>();
 
-    const { fetchVolume,fetchChapterByVolume, contentError, contentLoading } = useContent();
-  
-    const [selectedVolume, setSelectedVolume] = useState<Volume|null>(null);
-    const [chapters, setChapters] = useState<Chapter[]>([]);
+  /*Lista de estados globales */
+  const selectedVolume = useAppStore((s) => s.selectedVolume);
+  const fetchChaptersByVolumeId = useAppStore((s) => s.fetchChaptersByVolumeId);
+  const setSelectedChapter = useAppStore((s) => s.setSelectedChapter);
+  const chapters = useAppStore((s) => s.chapters);
 
+  // Obtener mangas al renderizar
+  useEffect(() => {
+    const getVolumes = async () => {
+      await fetchChaptersByVolumeId(volumeId);
+    };
+    getVolumes();
 
-    // Obtener mangas al renderizar
-    useEffect(() => {
-      const getVolumenInfo = async () => {
-        try {
-          const volume: Volume|null = await fetchVolume(volumeId);
-          setSelectedVolume(volume);
-          
-        } catch (e) {
-          console.error("Error fetching mangas:", e);
-        }
-      };
-      const getVolumes = async () => {
-        try {
-          const chaps: Chapter[] = await fetchChapterByVolume(volumeId);
-          setChapters(chaps);
-          
-        } catch (e) {
-          console.error("Error fetching mangas:", e);
-        }
-      };
-      getVolumenInfo();
-     getVolumes();
-
-    }, []);
+  }, []);
 
   const handleChapterTouch = (entry: Chapter) => {
+    setSelectedChapter(entry);
     router.push(`/(app)/reader/${entry.id}`);
   };
 
@@ -67,16 +49,16 @@ export default function VolumenScreen() {
         contentContainerStyle={{ paddingBottom: 40 }}
         renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={()=>handleChapterTouch(item)}
+            onPress={() => handleChapterTouch(item)}
             className="bg-zinc-900 border border-primary rounded-xl mx-4 my-3 p-3 flex-row items-center"
           >
-              <Image
+            <Image
               source={{ uri: "https://i.pinimg.com/736x/c3/92/e9/c392e9650f94bbec2be33c53bbea1f95.jpg" }}
               className="w-16 h-16 rounded-md mr-4"
             />
-        
+
             <View>
-            <Text className="text-primary font-bold">{item.title}</Text>
+              <Text className="text-primary font-bold">{item.title}</Text>
 
             </View>
           </TouchableOpacity>

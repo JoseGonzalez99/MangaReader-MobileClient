@@ -5,7 +5,6 @@ import { useRouter } from "expo-router";
 import Animated, {
   useAnimatedStyle,
   interpolate,
-  useSharedValue,
 } from "react-native-reanimated";
 import { useScrollY } from "@/hooks/useScrollY";
 

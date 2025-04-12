@@ -1,6 +1,6 @@
 import AppLogo from "@/components/atoms/AppLogo";
 import LoginForm from "@/components/forms/LoginForm";
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import logo from "@/assets/logo.png";
 
 export default function LoginScreen() {

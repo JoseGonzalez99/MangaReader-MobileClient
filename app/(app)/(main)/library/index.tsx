@@ -1,44 +1,45 @@
-// app/busqueda/index.tsx
 import { useEffect, useState } from "react";
 import {
   View,
   Text,
   TextInput,
   FlatList,
-  Image,
   Pressable,
   ActivityIndicator,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { useContent } from "@/hooks/useContent";
 import { Manga } from "@/dtos/mangareader.dto";
 import SmallCoverCard from "@/components/atoms/SmallCoverCard";
+import { useAppStore } from "@/store/Slices";
 
 export default function LibraryScreen() {
   const router = useRouter();
+
+  const mangas = useAppStore((s) => s.mangas);
+  const fetchMangas = useAppStore((s) => s.fetchMangas);
+  const loading = useAppStore((s) => s.loading);
+  const error = useAppStore((s) => s.error);
+  const setSelectedManga = useAppStore((s) => s.setSelectedManga);
+
   const [query, setQuery] = useState("");
-  const [mangasData, setMangasData] = useState<Manga[]>([]);
   const [filtered, setFiltered] = useState<Manga[]>([]);
   const [searchError, setSearchError] = useState("");
 
-  const { fetchAllmangas, contentError, contentLoading } = useContent();
-
-  // Obtener mangas al renderizar
+  // Obtener mangas desde Zustand
   useEffect(() => {
-    const getLibrary = async () => {
-      try {
-        const mangasFetched: Manga[] = await fetchAllmangas();
-        setMangasData(mangasFetched);
-        setFiltered(mangasFetched); // ← esto asegura que el FlatList tenga contenido inicial
-      } catch (e) {
-        console.error("Error fetching mangas:", e);
-      }
+    const load = async () => {
+      await fetchMangas();
     };
-    getLibrary();
+    load();
   }, []);
 
+  // Actualizar lista filtrada cuando se actualiza `mangas`
+  useEffect(() => {
+    setFiltered(mangas);
+  }, [mangas]);
+
   const handleSearch = () => {
-    const results = mangasData.filter((manga) =>
+    const results = mangas.filter((manga) =>
       manga.title.toLowerCase().includes(query.toLowerCase())
     );
     if (results.length === 0) {
@@ -51,8 +52,13 @@ export default function LibraryScreen() {
 
   const handleClear = () => {
     setQuery("");
-    setFiltered(mangasData);
+    setFiltered(mangas);
     setSearchError("");
+  };
+
+  const selectManga = (manga: Manga) => {
+    setSelectedManga(manga);
+    router.push(`/(app)/(manga)/${manga.id}`);
   };
 
   return (
@@ -80,14 +86,14 @@ export default function LibraryScreen() {
       ) : null}
 
       {/* Loader o error de contenido general */}
-      {contentLoading ? (
+      {loading ? (
         <View className="flex-1 justify-center items-center mt-20">
           <ActivityIndicator size="large" color="#ffffff" />
           <Text className="text-white mt-4">Cargando mangas...</Text>
         </View>
-      ) : contentError ? (
+      ) : error ? (
         <Text className="text-red-500 text-center mt-10 font-bold">
-          {contentError.message}
+          {error.message}
         </Text>
       ) : (
         <FlatList
@@ -98,10 +104,10 @@ export default function LibraryScreen() {
           contentContainerStyle={{ paddingBottom: 80 }}
           renderItem={({ item }) => (
             <Pressable
-              onPress={() => router.push(`/(app)/(manga)/${item.id}`)}
+              onPress={()=>selectManga(item)}
               className="mb-6 w-[48%]"
             >
-              <SmallCoverCard title={item.title} image={item.coverUrl}></SmallCoverCard>
+              <SmallCoverCard title={item.title} image={item.coverUrl} />
             </Pressable>
           )}
         />

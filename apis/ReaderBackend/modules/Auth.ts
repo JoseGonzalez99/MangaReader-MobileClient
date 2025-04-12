@@ -20,32 +20,18 @@ interface RegisterRequest {
 }
 
 export const login = async (data: LoginRequest): Promise<ApiSuccessResponse<LoginResponse>> => {
-  const response = await mainApiRequest<LoginResponse>({
+  return mainApiRequest<LoginResponse>({
     url: '/auth/login',
     method: 'POST',
     data,
   });
-
-  const { accessToken, refreshToken } = response.data;
-
-  console.log(response)
-  await SecureStore.setItemAsync('accessToken', accessToken);
-  await SecureStore.setItemAsync('refreshToken', refreshToken);
-
-  return response;
 };
 
 export const logout = async (): Promise<ApiSuccessResponse<null>> => {
-  const response = await mainApiRequest<null>({
+  return  mainApiRequest<null>({
     url: '/auth/logout',
     method: 'POST',
   });
-
-  // Limpiar tokens del almacenamiento seguro
-  await SecureStore.deleteItemAsync('accessToken');
-  await SecureStore.deleteItemAsync('refreshToken');
-
-  return response;
 };
 
 export const register = async (
