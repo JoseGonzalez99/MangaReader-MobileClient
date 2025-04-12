@@ -23,7 +23,9 @@ export const createUserSlice: StateCreator<UserSlice> = (set) => {
       set({ userLoading: true, userError: null });
 
       try {
+        console.log("fetchUser - 1")
         const user = await userInfoApi();
+        console.log("fetchUser - 2")
         if (user) set({ appUser: user.data });
       } catch (err) {
         if (err instanceof ApiException) set({ userError: err });

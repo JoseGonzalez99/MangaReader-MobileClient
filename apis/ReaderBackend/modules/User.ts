@@ -2,11 +2,14 @@ import { AppUser, Preferences, ReadingEntry } from "@/dtos/mangareader.dto";
 import { mainApiRequest } from "../core/helpers";
 import { ApiSuccessResponse } from "../core/types";
 
-
+import { Storage } from "@/utils/storage";
 
 export const userInfoApi = async (): Promise<
   ApiSuccessResponse<AppUser>
 > => {
+  const token = await Storage.getItem("accessToken");
+  console.log("📡 Token usado en userInfoApi:", token); // ← si null, no hay sesión válida
+
   const response = await mainApiRequest<AppUser>({
     url: `/me`,
     method: "GET",

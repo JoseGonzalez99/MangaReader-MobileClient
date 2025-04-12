@@ -13,15 +13,12 @@ export const mainApiRequest = async <T = any>(
   } catch (error) {
     if (error instanceof AxiosError) {
       const axiosError = error as AxiosError;
-
       // Intenta obtener respuesta estructurada del backend
       const backendError = axiosError.response?.data as ApiErrorResponse | undefined;
 
       if (backendError && backendError.code && backendError.message) {
         throw new ApiException(backendError);
       }
-
-      console.log(backendError)
       // Fallback solo si el backend no tiene estructura válida
       throw new ApiException({
         message: axiosError.message || 'Unexpected error',

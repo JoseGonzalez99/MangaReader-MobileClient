@@ -1,14 +1,13 @@
 import axios, { AxiosError } from 'axios';
-import * as SecureStore from 'expo-secure-store'; // o AsyncStorage si no usas Expo
 import { ApiErrorResponse } from './types';
-
+import {Storage}  from '@/utils/storage'
 const mainApi = axios.create({
   baseURL: process.env.EXPO_PUBLIC_API_URL,
   timeout: 10000,
 });
 
 mainApi.interceptors.request.use(async (config) => {
-  const accessToken = await SecureStore.getItemAsync('accessToken');
+  const accessToken = await Storage.getItem('accessToken');
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
@@ -23,7 +22,7 @@ mainApi.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      const refreshToken = await SecureStore.getItemAsync('refreshToken');
+      const refreshToken = await  Storage.getItem('refreshToken');
       if (refreshToken) {
         try {
           const refreshResponse = await axios.post('https://tudominio.com/api/v1/auth/refresh', {
@@ -31,7 +30,7 @@ mainApi.interceptors.response.use(
           });
 
           const newAccessToken = refreshResponse.data.data.accessToken;
-          await SecureStore.setItemAsync('accessToken', newAccessToken);
+          await Storage.setItem('accessToken', newAccessToken);
 
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
           return mainApi(originalRequest);

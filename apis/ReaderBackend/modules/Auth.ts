@@ -20,11 +20,14 @@ interface RegisterRequest {
 }
 
 export const login = async (data: LoginRequest): Promise<ApiSuccessResponse<LoginResponse>> => {
-  return mainApiRequest<LoginResponse>({
+
+  const res= await mainApiRequest<LoginResponse>({
     url: '/auth/login',
     method: 'POST',
     data,
   });
+  console.log(res);
+  return res
 };
 
 export const logout = async (): Promise<ApiSuccessResponse<null>> => {

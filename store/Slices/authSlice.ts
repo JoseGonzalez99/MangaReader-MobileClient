@@ -1,10 +1,10 @@
 import { StateCreator } from 'zustand';
-import * as SecureStore from 'expo-secure-store';
 import { ApiException } from '@/apis/ReaderBackend/core/types';
 import { isTokenValid } from '@/helpers/validateJwt';
 import { login, logout, register } from '@/apis/ReaderBackend/modules/Auth';
 import { userInfoApi } from '@/apis/ReaderBackend/modules/User';
 
+import { Storage } from '@/utils/storage';
 export interface AuthSlice {
   isAuthenticated: boolean;
   loading: boolean;
@@ -26,18 +26,25 @@ export const createAuthSlice: StateCreator<AuthSlice, [], [], AuthSlice> = (set,
 
     login: async (email, password) => {
       set({ loading: true, error: null });
-
+      console.log("Login -1 ")
       try {
         const response = await login({ email, password });
-        const { accessToken, refreshToken } = response.data;
+        console.log("Login -2 ")
 
-        await SecureStore.setItemAsync('accessToken', accessToken);
-        await SecureStore.setItemAsync('refreshToken', refreshToken);
+        const { accessToken, refreshToken } = response.data;
+        console.log("Login -3 ")
+
+        await Storage.setItem("accessToken", accessToken);
+        await Storage.setItem("refreshToken", refreshToken);
+        console.log("Login -4 ")
+
+        console.log("login todo Chill")
         set({ isAuthenticated: true });
-        
-        await userInfoApi();
+        console.log("Login -5 ")
+
       } catch (err) {
         if (err instanceof ApiException) {
+          console.error(err);
           set({ error: err });
         } else {
           console.error('Unexpected error during login:', err);
@@ -77,21 +84,22 @@ export const createAuthSlice: StateCreator<AuthSlice, [], [], AuthSlice> = (set,
         console.warn('Logout error (continuando de todas formas):', err);
       }
 
-      await SecureStore.deleteItemAsync('accessToken');
-      await SecureStore.deleteItemAsync('refreshToken');
+      await Storage.deleteItem('accessToken');
+      await Storage.deleteItem('refreshToken');
 
       set({ isAuthenticated: false });
     },
 
     checkToken: async () => {
-      const token = await SecureStore.getItemAsync('accessToken');
+      const token = await Storage.getItem('accessToken');
       const isValid = token && isTokenValid(token);
 
       set({ isAuthenticated: Boolean(isValid) });
 
       if (!isValid) {
-        await SecureStore.deleteItemAsync('accessToken');
-        await SecureStore.deleteItemAsync('refreshToken');
+        await Storage.deleteItem('accessToken');
+        await Storage.deleteItem('refreshToken');
+  
       }
     },
   };

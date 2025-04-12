@@ -22,11 +22,12 @@ export default function LoginForm() {
 
   const onSubmit = async (data: LoginDTO) => {
     try {
-      
+       console.log("onSubmit Ejecutado")
       await login(data.email, data.password);
+      console.log("login Ejecutado")
       await fetchUser();
-      console.log('[LoginForm] datos enviados:', data);
-      router.replace("/(main)/home"); //Regresamos al root
+      console.log("fetchUser Ejecutado")
+      router.replace("/(main)/home/");
     } catch (error) {
       if (error instanceof ApiException) {
         alert(error.message);
