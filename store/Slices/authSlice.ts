@@ -3,7 +3,7 @@ import * as SecureStore from 'expo-secure-store';
 import { ApiException } from '@/apis/ReaderBackend/core/types';
 import { isTokenValid } from '@/helpers/validateJwt';
 import { login, logout, register } from '@/apis/ReaderBackend/modules/Auth';
-import { useAppStore } from '.';
+import { userInfoApi } from '@/apis/ReaderBackend/modules/User';
 
 export interface AuthSlice {
   isAuthenticated: boolean;
@@ -16,7 +16,8 @@ export interface AuthSlice {
   checkToken: () => Promise<void>;
 }
 
-export const createAuthSlice: StateCreator<AuthSlice> = (set) => {
+export const createAuthSlice: StateCreator<AuthSlice, [], [], AuthSlice> = (set, get) => {
+
 
   return {
     isAuthenticated: false,
@@ -33,8 +34,8 @@ export const createAuthSlice: StateCreator<AuthSlice> = (set) => {
         await SecureStore.setItemAsync('accessToken', accessToken);
         await SecureStore.setItemAsync('refreshToken', refreshToken);
         set({ isAuthenticated: true });
-        const { fetchUser } = useAppStore.getState();
-        await fetchUser();
+        
+        await userInfoApi();
       } catch (err) {
         if (err instanceof ApiException) {
           set({ error: err });
@@ -70,8 +71,8 @@ export const createAuthSlice: StateCreator<AuthSlice> = (set) => {
 
     logout: async () => {
       try {
-        await logout();
-        useAppStore.getState().clearUser();
+        await logout();//logout de mi useAuth
+
       } catch (err) {
         console.warn('Logout error (continuando de todas formas):', err);
       }

@@ -8,9 +8,9 @@ export default function AuthLayout() {
 
   if (loading) return null;
 
-  // ✅ Redirección segura
-  if (isAuthenticated) return <Redirect href="/(main)/home" />;
-
+  if (isAuthenticated) {
+    return <Redirect href="/(app)/(main)/home" />;
+  }
   return (
     <Stack
       screenOptions={{

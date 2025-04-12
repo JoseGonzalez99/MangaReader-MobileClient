@@ -1,13 +1,15 @@
-import { Controller, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { View, TextInput, Pressable, Text } from 'react-native';
-import { loginSchema, LoginDTO } from '@/dtos/login.dto';
-import { useAuthContext } from '@/contexts/AuthContext';
-import { useRouter } from 'expo-router';
-import { ApiException } from '@/apis/ReaderBackend/core/types';
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { View, TextInput, Pressable, Text } from "react-native";
+import { loginSchema, LoginDTO } from "@/dtos/login.dto";
+import { useRouter } from "expo-router";
+import { ApiException } from "@/apis/ReaderBackend/core/types";
+import { useAppStore } from "@/store/Slices";
 
 export default function LoginForm() {
-  const { login } = useAuthContext();
+  const login = useAppStore((s) => s.login);
+  const fetchUser = useAppStore((s) => s.fetchUser);
+
   const router = useRouter();
 
   const {
@@ -20,13 +22,16 @@ export default function LoginForm() {
 
   const onSubmit = async (data: LoginDTO) => {
     try {
-      await login(data.email,data.password);
-      router.replace('/');//Regresamos al root
+      
+      await login(data.email, data.password);
+      await fetchUser();
+      console.log('[LoginForm] datos enviados:', data);
+      router.replace("/(main)/home"); //Regresamos al root
     } catch (error) {
       if (error instanceof ApiException) {
         alert(error.message);
       } else {
-        alert('Error desconocido'+ error);
+        alert("Error desconocido" + error);
       }
     }
   };
@@ -47,7 +52,9 @@ export default function LoginForm() {
           />
         )}
       />
-      {errors.email && <Text className="text-red-500">{errors.email.message}</Text>}
+      {errors.email && (
+        <Text className="text-red-500">{errors.email.message}</Text>
+      )}
 
       <Controller
         control={control}
@@ -63,17 +70,27 @@ export default function LoginForm() {
           />
         )}
       />
-      {errors.password && <Text className="text-red-500">{errors.password.message}</Text>}
+      {errors.password && (
+        <Text className="text-red-500">{errors.password.message}</Text>
+      )}
 
       <Pressable
+        onPress={(e) => {
+          e.preventDefault?.(); // ← esto protege en web
+          handleSubmit(onSubmit)();
+        }}
         className="bg-primary p-3 rounded-xl mt-4 items-center"
-        onPress={handleSubmit(onSubmit)}
       >
         <Text className="text-white font-bold">Iniciar Sesión</Text>
       </Pressable>
 
-      <Pressable onPress={() => router.push('/register')} className="mt-4 items-center">
-        <Text className="text-sm text-text underline">¿No tienes cuenta? Registrarse</Text>
+      <Pressable
+        onPress={() => router.push("/register")}
+        className="mt-4 items-center"
+      >
+        <Text className="text-sm text-text underline">
+          ¿No tienes cuenta? Registrarse
+        </Text>
       </Pressable>
     </View>
   );

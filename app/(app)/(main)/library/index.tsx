@@ -1,3 +1,4 @@
+// (main)/library/index.tsx
 import { useEffect, useState } from "react";
 import {
   View,
@@ -25,19 +26,21 @@ export default function LibraryScreen() {
   const [filtered, setFiltered] = useState<Manga[]>([]);
   const [searchError, setSearchError] = useState("");
 
-  // Obtener mangas desde Zustand
+
   useEffect(() => {
     const load = async () => {
       await fetchMangas();
     };
     load();
+    
   }, []);
 
-  // Actualizar lista filtrada cuando se actualiza `mangas`
-  useEffect(() => {
-    setFiltered(mangas);
-  }, [mangas]);
 
+  useEffect(() => {
+    if (mangas.length > 0) {
+      setFiltered(mangas);
+    }
+  }, [mangas])
   const handleSearch = () => {
     const results = mangas.filter((manga) =>
       manga.title.toLowerCase().includes(query.toLowerCase())
@@ -56,10 +59,13 @@ export default function LibraryScreen() {
     setSearchError("");
   };
 
-  const selectManga = (manga: Manga) => {
-    setSelectedManga(manga);
-    router.push(`/(app)/(manga)/${manga.id}`);
-  };
+const selectManga = (manga: Manga) => {
+  console.log("🖱️ selectManga ejecutado:", manga.title);
+  console.trace(); // ← te muestra de dónde se llamó realmente
+  setSelectedManga(manga);
+  router.push(`/(app)/(manga)/${manga.id}`);
+};
+
 
   return (
     <View className="flex-1 bg-black p-4">

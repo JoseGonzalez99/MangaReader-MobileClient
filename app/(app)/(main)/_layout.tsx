@@ -1,3 +1,4 @@
+//(main)/_layout.tsx
 import { Tabs } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { colors } from "@/constants/colors";
@@ -34,6 +35,7 @@ export default function MainTabsLayout() {
     >
       <Tabs.Screen
         name="home/index"
+        
         options={{
           title: "Inicio",
           tabBarIcon: ({ color }) => (
@@ -49,6 +51,7 @@ export default function MainTabsLayout() {
             <FontAwesome name="book" size={30} color={color}></FontAwesome>
           ),
         }}
+        
       />
       <Tabs.Screen
         name="profile/index"

@@ -9,10 +9,22 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { useEffect } from "react";
+import { useAppStore } from "@/store/Slices";
 
 export default function HomeScreen() {
   const router = useRouter();
   //const { lastRead, history = [], upcoming = [] } = useContent();
+
+  useEffect(() => {
+    const selected = useAppStore.getState().selectedManga;
+    if (selected) {
+      router.push(`/(app)/(manga)/${selected.id}`);
+    }
+  }, []);
+  
+
+
   const lastRead: ReadingEntry | null = {
     mangaId: "a6c84040-cfcd-4a6f-b005-643b96385281",
     mangaTitle: "Berserk",
