@@ -29,19 +29,10 @@ export const createAuthSlice: StateCreator<AuthSlice, [], [], AuthSlice> = (set,
       console.log("Login -1 ")
       try {
         const response = await login({ email, password });
-        console.log("Login -2 ")
-
         const { accessToken, refreshToken } = response.data;
-        console.log("Login -3 ")
-
         await Storage.setItem("accessToken", accessToken);
         await Storage.setItem("refreshToken", refreshToken);
-        console.log("Login -4 ")
-
-        console.log("login todo Chill")
         set({ isAuthenticated: true });
-        console.log("Login -5 ")
-
       } catch (err) {
         if (err instanceof ApiException) {
           console.error(err);

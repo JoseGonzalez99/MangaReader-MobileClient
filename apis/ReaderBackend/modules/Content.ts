@@ -1,4 +1,4 @@
-import { Chapter, ChapterSourcePage, Manga, Provider, Volume } from "@/dtos/mangareader.dto";
+import { Chapter, ChapterSource, ChapterSourcePage, Manga, Provider, Volume } from "@/dtos/mangareader.dto";
 import { mainApiRequest } from "../core/helpers";
 import { ApiSuccessResponse } from "../core/types";
 
@@ -31,9 +31,9 @@ type GetAllChapterOfManga= {
 
 
 //Para obtener las fuentes de capitulos.
-export const getAvailablesSources = async (mangaId:string): Promise<ApiSuccessResponse<Provider[]>> => {
-  const response = await mainApiRequest<Provider[]>({
-    url: `/public/sources/${mangaId}/available-sources`,
+export const getAvailablesSources = async (chapterId:string): Promise<ApiSuccessResponse<ChapterSource[]>> => {
+  const response = await mainApiRequest<ChapterSource[]>({
+    url: `/public/sources/${chapterId}/available-sources`,
     method: 'GET'
   });
   return response;
@@ -90,11 +90,10 @@ export const getChapterbyVolumenId = async (volumeId:string): Promise<ApiSuccess
 
 
 //Para obtener los capitulos de un manga 
-export const getAllChapterByMangaId = async ({mangaId,query}:GetAllChapterOfManga): Promise<ApiSuccessResponse<Chapter[]>> => {
+export const getAllChapterByMangaId = async (mangaId:string): Promise<ApiSuccessResponse<Chapter[]>> => {
   const response = await mainApiRequest<Chapter[]>({
     url: `/public/chapters/by-manga/${mangaId}`,
     method: 'GET',
-    params:query
   });
   return response;
 };
