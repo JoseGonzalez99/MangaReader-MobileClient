@@ -77,7 +77,7 @@ export interface Like{
 
 export interface  Preferences{
     theme:string;
-    readingDirection:string;
+    readingDirection:"rtl"|"ltr";
     defaultProvider:string;
 }
 

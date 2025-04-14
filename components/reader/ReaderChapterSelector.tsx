@@ -36,7 +36,7 @@ const ReaderChapterSelector = () => {
 				paddingTop: 10,
 			}}
 			ListHeaderComponent={
-				<Text className="text-white text-xl font-bold mb-4 text-center">
+				<Text className="text-white text-md font-bold mb-4 text-center">
 					Seleccionar capítulo
 				</Text>
 			}

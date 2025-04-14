@@ -69,6 +69,17 @@ export const getVolumeById = async (volumeId:string): Promise<ApiSuccessResponse
 };
 
 
+
+//Busca un volumen por su id
+export const getChapterById = async (volumeId:string): Promise<ApiSuccessResponse<Chapter>> => {
+  const response = await mainApiRequest<Chapter>({
+    url: `/chapters/${volumeId}`,
+    method: 'GET',
+  });
+  return response;
+};
+
+
 //Obtiene los volumenes de un manga
 export const getVolumesByMangaId = async (mangaId:string): Promise<ApiSuccessResponse<Volume[]>> => {
   const response = await mainApiRequest<Volume[]>({

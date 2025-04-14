@@ -12,6 +12,8 @@ export default function VolumenScreen() {
 
   /*Lista de estados globales */
   const selectedVolume = useAppStore((s) => s.selectedVolume);
+  const selectedManga = useAppStore((s) => s.selectedManga);
+
   const fetchChaptersByVolumeId = useAppStore((s) => s.fetchChaptersByVolumeId);
   const setSelectedChapter = useAppStore((s) => s.setSelectedChapter);
   const chapters = useAppStore((s) => s.chapters);
@@ -53,7 +55,7 @@ export default function VolumenScreen() {
             className="bg-zinc-900 border border-primary rounded-xl mx-4 my-3 p-3 flex-row items-center"
           >
             <Image
-              source={{ uri: "https://i.pinimg.com/736x/c3/92/e9/c392e9650f94bbec2be33c53bbea1f95.jpg" }}
+              source={{ uri: selectedManga?.faviconUrl }}
               className="w-16 h-16 rounded-md mr-4"
             />
 

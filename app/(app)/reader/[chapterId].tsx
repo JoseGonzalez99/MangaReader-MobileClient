@@ -3,7 +3,7 @@ import { ChapterSourceSelector } from "@/components/reader/ChapterSourceSelector
 import ReaderChapterSelector from "@/components/reader/ReaderChapterSelector";
 import ReaderParams from "@/components/reader/ReaderParameters";
 import { ReaderTabs } from "@/components/reader/ReaderTabs";
-import { Manga } from "@/dtos/mangareader.dto";
+import { ChapterSourcePage, Manga } from "@/dtos/mangareader.dto";
 import { useAppStore } from "@/store/Slices";
 import { getNextChapter } from "@/utils/readerUtils";
 import { FontAwesome } from "@expo/vector-icons";
@@ -11,6 +11,7 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { TouchableOpacity, View, Text } from "react-native";
 import ImageViewing from "react-native-image-viewing";
+import { ImageSource } from "react-native-image-viewing/dist/@types";
 
 export default function ReaderScreen() {
   const selectedChapter = useAppStore((s) => s.selectedChapter);
@@ -20,6 +21,8 @@ export default function ReaderScreen() {
   const selectedChapterSource = useAppStore((s) => s.selectedChapterSource);
   const userPreferences = useAppStore((s) => s.userPreferences);
   const chapters = useAppStore((s) => s.chapters);
+  const clearContent = useAppStore((s) => s.clearContent);
+
 
   const fetchAllChaptersOfManga = useAppStore((s) => s.fetchAllChaptersOfManga);
   const fetchPages = useAppStore((s) => s.fetchPages);
@@ -27,6 +30,9 @@ export default function ReaderScreen() {
   const [showChaptersDrawer, setShowChaptersDrawer] = useState(false);
   const [showParamsDrawer, setShowParamsDrawer] = useState(false);
   const pages = useAppStore((s) => s.pages);
+
+  const [pagesSorted,setPagesSorted] =useState<ImageSource[]>([]);
+
 
   const [showReaderTabs, setShowReaderTabs] = useState(true);
 
@@ -42,6 +48,21 @@ export default function ReaderScreen() {
     }
   }, [selectedManga]);
 
+
+  useEffect(() => {
+    if (pages.length>0) {
+      const images = (
+        (userPreferences?.readingDirection as "ltr" | "rtl") === "rtl"
+          ? [...pages].reverse()
+          : pages
+      ).map((p) => ({
+        uri: p.imageUrl,
+      }));
+      setPagesSorted(images);
+    }
+  }, [pages,userPreferences]);
+
+
   // ✅ Cargar páginas al cambiar de capítulo o fuente
   useEffect(() => {
     if (selectedChapter?.id && selectedChapterSource?.languageCode) {
@@ -49,12 +70,6 @@ export default function ReaderScreen() {
     }
   }, [selectedChapter, selectedChapterSource]);
 
-  // 👇 Future: usar userPreferences si hay lógica dependiente
-  // useEffect(() => {
-  //   if (userPreferences) {
-  //     // aplicar algún efecto o lógica si se cambia el modo de lectura, etc.
-  //   }
-  // }, [userPreferences]);
 
   /*Funciones de utilidad */
   const toggleReaderParamDrawer = () => {
@@ -71,44 +86,58 @@ export default function ReaderScreen() {
   const toggleReaderChapterListDrawer = () => {
     setShowChaptersDrawer(!showChaptersDrawer);
   };
-  console.log("showReaderTabs:" + showReaderTabs);
+  const onCloseReader = () => {
+    clearContent()
+    router.push(`/(app)/(main)/home`);
+  };
 
-  const images = (
-    (userPreferences?.readingDirection as "ltr" | "rtl") === "rtl"
-      ? [...pages].reverse()
-      : pages
-  ).map((p) => ({
-    uri: p.imageUrl,
-  }));
+
   return (
     <View className="flex-1 bg-background p-4 ">
       {selectedChapterSource == null && <ChapterSourceSelector />}
       {selectedChapterSource != null && (
         <View className="flex-1">
           <ImageViewing
-            images={images}
-            imageIndex={0}
+            images={pagesSorted}
+            imageIndex={userPreferences?.readingDirection === "rtl" &&pagesSorted.length>0
+              ? pagesSorted.length-1
+              : 0}
             visible={true}
             swipeToCloseEnabled={false}
             doubleTapToZoomEnabled={true}
             onRequestClose={() => {}}
             HeaderComponent={() => (
-              <TouchableOpacity
-              onPress={() => setShowReaderTabs((prev) => !prev)}
-              className="absolute top-10 right-5 z-50 bg-black/70 px-4 py-2 rounded-full flex-row items-center gap-x-2"
-            >
-              {showReaderTabs ? (
-                <>
-                  <Text className="text-white text-xs opacity-90">Ocultar barra de navegación</Text>
-                  <FontAwesome name="eye-slash" size={20} color="#fff" />
-                </>
-              ) : (
-                <>
-                  <Text className="text-white text-xs opacity-90">Mostrar barra de navegación</Text>
-                  <FontAwesome name="eye" size={20} color="#fff" />
-                </>
-              )}
-            </TouchableOpacity>
+              <View className="absolute top-10 left-5 right-5 z-50 flex-row justify-around">
+                {/* Botón CERRAR (solo si showReaderTabs está activo) */}
+
+                {showReaderTabs && (
+                  <TouchableOpacity
+                    onPress={onCloseReader}
+                    className="bg-red-700 px-4 py-2 rounded-full flex-row items-center gap-x-2"
+                  >
+                    <FontAwesome name="times" size={18} color="#fff" />
+                    <Text className="text-white text-xs opacity-90">Cerrar lector</Text>
+                  </TouchableOpacity>
+                )}
+            
+                {/* Botón SIEMPRE visible: mostrar/ocultar barra */}
+                <TouchableOpacity
+                  onPress={() => setShowReaderTabs((prev) => !prev)}
+                  className="bg-black/70 px-4 py-2 rounded-full flex-row items-center gap-x-2"
+                >
+                  {showReaderTabs ? (
+                    <>
+                      <Text className="text-white text-xs opacity-90">Ocultar barra</Text>
+                      <FontAwesome name="eye-slash" size={18} color="#fff" />
+                    </>
+                  ) : (
+                    <>
+                      <Text className="text-white text-xs opacity-90">Mostrar barra</Text>
+                      <FontAwesome name="eye" size={18} color="#fff" />
+                    </>
+                  )}
+                </TouchableOpacity>
+              </View>
             )}
             FooterComponent={() =>
               showReaderTabs ? (
@@ -124,7 +153,7 @@ export default function ReaderScreen() {
           />
           <BottomDrawer
             isVisible={showParamsDrawer}
-            scrollable={false} // 👈 MUY IMPORTANTE
+            scrollable={true} // 👈 MUY IMPORTANTE
             title="Configuraciones"
             onClose={toggleReaderParamDrawer}
           >

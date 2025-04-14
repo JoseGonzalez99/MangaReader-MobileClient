@@ -1,4 +1,4 @@
-import BigCoverCard from "@/components/atoms/BigCoverCard";
+import BigCoverCard from "@/components/atoms/BigReadingEntryCard";
 import SmallCoverCard from "@/components/atoms/SmallCoverCard";
 import { ReadingEntry } from "@/dtos/mangareader.dto";
 import {
@@ -9,49 +9,52 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppStore } from "@/store/Slices";
+import BigReadingEntryCard from "@/components/atoms/BigReadingEntryCard";
 
 export default function HomeScreen() {
   const router = useRouter();
-  //const { lastRead, history = [], upcoming = [] } = useContent();
+  const fetchLastRead = useAppStore.getState().fetchLastRead;
+  const fetchMangaById = useAppStore.getState().fetchMangaById;
+  const [lastRead, setLastRead] = useState<ReadingEntry | null>();
+  const fetchReadingHistory = useAppStore.getState().fetchReadingHistory;
+  const [history, setHistory] = useState<ReadingEntry[]>([]);
 
   useEffect(() => {
-    const selected = useAppStore.getState().selectedManga;
-    if (selected) {
-      router.push(`/(app)/(manga)/${selected.id}`);
-    }
+    const getLastRead = async () => {
+      const res = await fetchLastRead();
+      setLastRead(res);
+    };
+    getLastRead();
   }, []);
+
+  useEffect(() => {
+    const gethistory = async () => {
+      const res = await fetchReadingHistory();
+      setHistory(res);
+    };
+    gethistory();
+  }, []);
+
+  const upcoming: ReadingEntry[] = [];//Mantener vacio mientras
+
+  const handleEntryPress = async (entry: ReadingEntry) => {
+    try {
+      await fetchMangaById(entry.mangaId);
   
-
-
-  const lastRead: ReadingEntry | null = {
-    mangaId: "a6c84040-cfcd-4a6f-b005-643b96385281",
-    mangaTitle: "Berserk",
-    coverUrl:
-      "https://mrwallpaper.com/images/hd/download-berserk-wallpaper-xuc3lwbexky9xyz1.jpg",
-    faviconUrl:
-      "https://i.pinimg.com/736x/c3/92/e9/c392e9650f94bbec2be33c53bbea1f95.jpg",
-    chapterId: "64fa9123-4b15-4640-afbf-470587d7bd57",
-    lastPageRead: 1,
-    lastReadAt: "2025-04-07T14:35:39.585Z",
-    status: "IN_PROGRESS",
-  };
-
-  const history: ReadingEntry[] = [];
-
-  const upcoming: ReadingEntry[] = [];
-
-  const handleMangaLastReadPress = (entry: ReadingEntry) => {
-    // Aquí podrías navegar a un lector o detalles
-    router.push(`/(app)/(manga)/${entry.mangaId}`);
-  };
-  const handleMangaPress = (entry: ReadingEntry) => {
-    if (entry?.chapterId) {
-      router.push(`/reader/${entry.chapterId}`);
+      // Confirmamos que selectedManga fue seteado correctamente
+      const selected = useAppStore.getState().selectedManga;
+  
+      if (selected && selected.id === entry.mangaId) {
+        router.push(`/(app)/(manga)/${entry.mangaId}`);
+      } else {
+        console.warn("Manga no se cargó correctamente o no coincide.");
+      }
+    } catch (err) {
+      console.error("[HomeScreen] Error al obtener manga:", err);
     }
   };
-
   return (
     <ScrollView
       className="flex-1 bg-background px-4"
@@ -64,13 +67,9 @@ export default function HomeScreen() {
         {lastRead ? (
           <TouchableOpacity
             activeOpacity={0.9}
-            onPress={() => handleMangaLastReadPress(lastRead)}
+            onPress={() => handleEntryPress(lastRead)}
           >
-            <BigCoverCard
-              title={lastRead.mangaTitle}
-              rating={10}
-              image={lastRead.coverUrl}
-            />
+            <BigReadingEntryCard entry={lastRead}></BigReadingEntryCard>
           </TouchableOpacity>
         ) : (
           <View className="bg-zinc-800 rounded-lg p-5 items-center justify-center h-48">
@@ -93,12 +92,12 @@ export default function HomeScreen() {
             renderItem={({ item }) => (
               <TouchableOpacity
                 activeOpacity={0.85}
-                onPress={() => handleMangaPress(item)}
+                onPress={() => handleEntryPress(item)}
               >
                 <SmallCoverCard title={item.mangaTitle} image={item.coverUrl} />
               </TouchableOpacity>
             )}
-            keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(index) => index.toString()}
             horizontal
             contentContainerStyle={{ paddingBottom: 20, gap: 15 }}
             showsHorizontalScrollIndicator={false}

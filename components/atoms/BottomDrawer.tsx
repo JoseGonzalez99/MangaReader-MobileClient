@@ -23,7 +23,7 @@ const BottomDrawer = ({
   isVisible,
   onClose,
   children,
-  scrollable = true,
+  scrollable,
   title
 }: BottomDrawerProps) => {
   const [visible, setVisible] = useState(isVisible);

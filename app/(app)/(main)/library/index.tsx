@@ -12,6 +12,7 @@ import { useRouter } from "expo-router";
 import { Manga } from "@/dtos/mangareader.dto";
 import SmallCoverCard from "@/components/atoms/SmallCoverCard";
 import { useAppStore } from "@/store/Slices";
+import { Feather, FontAwesome } from "@expo/vector-icons";
 
 export default function LibraryScreen() {
   const router = useRouter();
@@ -26,21 +27,18 @@ export default function LibraryScreen() {
   const [filtered, setFiltered] = useState<Manga[]>([]);
   const [searchError, setSearchError] = useState("");
 
-
   useEffect(() => {
     const load = async () => {
       await fetchMangas();
     };
     load();
-    
   }, []);
-
 
   useEffect(() => {
     if (mangas.length > 0) {
       setFiltered(mangas);
     }
-  }, [mangas])
+  }, [mangas]);
   const handleSearch = () => {
     const results = mangas.filter((manga) =>
       manga.title.toLowerCase().includes(query.toLowerCase())
@@ -59,36 +57,41 @@ export default function LibraryScreen() {
     setSearchError("");
   };
 
-const selectManga = (manga: Manga) => {
-  console.log("🖱️ selectManga ejecutado:", manga.title);
-  console.trace(); // ← te muestra de dónde se llamó realmente
-  setSelectedManga(manga);
-  router.push(`/(app)/(manga)/${manga.id}`);
-};
-
+  const selectManga = (manga: Manga) => {
+    setSelectedManga(manga);
+    router.push(`/(app)/(manga)/${manga.id}`);
+  };
 
   return (
     <View className="flex-1 bg-black p-4">
       {/* Search Bar */}
       <View className="flex-row items-center bg-neutral-800 rounded-full px-4 py-2 mb-4">
         <TextInput
-          placeholder="Manga/Autor"
+          placeholder="Buscar manga o autor..."
           placeholderTextColor="#aaa"
           className="flex-1 text-white"
           value={query}
           onChangeText={setQuery}
         />
-        <Pressable onPress={handleClear}>
-          <Text className="text-white font-bold mx-2">✖</Text>
-        </Pressable>
-        <Pressable onPress={handleSearch}>
-          <Text className="text-white font-bold">🔍</Text>
+
+        {/* Botón de limpiar */}
+        {query.length > 0 && (
+          <Pressable onPress={handleClear} className="px-2">
+            <Feather name="x-circle" size={20} color="#aaa" />
+          </Pressable>
+        )}
+
+        {/* Botón de búsqueda */}
+        <Pressable onPress={handleSearch} className="pl-2">
+          <Feather name="search" size={20} color="white" />
         </Pressable>
       </View>
 
       {/* Error de búsqueda */}
       {searchError ? (
-        <Text className="text-red-500 text-center mb-4 font-bold">{searchError}</Text>
+        <Text className="text-red-500 text-center mb-4 font-bold">
+          {searchError}
+        </Text>
       ) : null}
 
       {/* Loader o error de contenido general */}
@@ -110,7 +113,7 @@ const selectManga = (manga: Manga) => {
           contentContainerStyle={{ paddingBottom: 80 }}
           renderItem={({ item }) => (
             <Pressable
-              onPress={()=>selectManga(item)}
+              onPress={() => selectManga(item)}
               className="mb-6 w-[48%]"
             >
               <SmallCoverCard title={item.title} image={item.coverUrl} />

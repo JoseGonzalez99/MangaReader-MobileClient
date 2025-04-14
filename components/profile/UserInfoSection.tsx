@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router'
 import { View, Text, Pressable, TextInput, Modal, Alert } from 'react-native'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { BlurView } from 'expo-blur'
 import { useAppStore } from '@/store/Slices'
 

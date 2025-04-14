@@ -5,12 +5,15 @@ import {
   Chapter,
   ChapterSourcePage,
   ChapterSource,
+  ReadingEntry,
 } from "@/dtos/mangareader.dto";
 import { ApiException } from "@/apis/ReaderBackend/core/types";
 import {
   getAllChapterByMangaId,
   getAvailablesSources,
+  getChapterById,
   getChapterbyVolumenId,
+  getMangaById,
   getMangas,
   getPagesByChapter,
   getVolumesByMangaId,
@@ -25,10 +28,11 @@ export interface ContentSlice {
   sources: ChapterSource[];
   pages: ChapterSourcePage[];
   selectedManga: Manga | null;
+  selectedReadingEntry: ReadingEntry | null;
   selectedVolume: Volume | null;
   selectedChapter: Chapter | null;
   selectedChapterSource: ChapterSource | null;
-
+  
   volumesOfSelectedManga: Volume[] | null;
 
   setSelectedManga: (manga: Manga | null) => void;
@@ -38,27 +42,33 @@ export interface ContentSlice {
   setSelectedChapterSource: (source: ChapterSource | null) => void;
 
   fetchMangas: () => Promise<void>;
+  fetchMangaById: (mangaId: string) => Promise<void>;
   fetchVolumesByMangaId: (mangaId: string) => Promise<void>;
   fetchChaptersByVolumeId: (volumeId: string) => Promise<void>;
-  fetchPages: (chapterId: string,lang:string) => Promise<void>;
+  fetchPages: (chapterId: string, lang: string) => Promise<void>;
   fetchChaptersSources: (chapterId: string) => Promise<void>;
-  fetchAllChaptersOfManga:(mangaId: string) => Promise<void>;
+  fetchChapterById: (chapterId: string) => Promise<void>;
+
+  fetchAllChaptersOfManga: (mangaId: string) => Promise<void>;
   clearContent: () => void;
 }
 
-export const createContentSlice: StateCreator<ContentSlice> = (set) => ({
+export const createContentSlice: StateCreator<ContentSlice> = (set,get) => ({
   mangas: [],
   chapters: [],
   pages: [],
   loading: false,
   error: null,
-  sources:[],
+  sources: [],
+  selectedReadingEntry: null,
 
   selectedManga: null,
   selectedVolume: null,
   selectedChapter: null,
   selectedChapterSource: null,
   volumesOfSelectedManga: [],
+
+
 
   setSelectedManga: (manga) => set({ selectedManga: manga }),
   setSelectedVolume: (volume) => set({ selectedVolume: volume }),
@@ -93,6 +103,19 @@ export const createContentSlice: StateCreator<ContentSlice> = (set) => ({
     }
   },
 
+  fetchMangaById: async (mangaId) => {
+    set({ loading: true, error: null });
+    try {
+      const data = await getMangaById(mangaId);
+      set({ selectedManga: data.data });
+    } catch (err) {
+      if (err instanceof ApiException) set({ error: err });
+      else console.error("[contentSlice] Error cargando volúmenes:", err);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
   fetchChaptersByVolumeId: async (volumeId) => {
     set({ loading: true, error: null });
     try {
@@ -106,7 +129,7 @@ export const createContentSlice: StateCreator<ContentSlice> = (set) => ({
     }
   },
 
-  fetchPages: async (chapterId,lang) => {
+  fetchPages: async (chapterId, lang) => {
     set({ loading: true, error: null });
     try {
       const data = await getPagesByChapter({
@@ -137,6 +160,18 @@ export const createContentSlice: StateCreator<ContentSlice> = (set) => ({
     }
   },
 
+  fetchChapterById: async (chapterId) => {
+    set({ loading: true, error: null });
+    try {
+      const data = await getChapterById(chapterId);
+      set({ selectedChapter: data.data });
+    } catch (err) {
+      if (err instanceof ApiException) set({ error: err });
+      else console.error("[contentSlice] Error cargando páginas:", err);
+    } finally {
+      set({ loading: false });
+    }
+  },
   fetchAllChaptersOfManga: async (mangaId) => {
     set({ loading: true, error: null });
     try {
@@ -150,7 +185,6 @@ export const createContentSlice: StateCreator<ContentSlice> = (set) => ({
     }
   },
 
-
   clearContent: () => {
     set({
       mangas: [],
@@ -158,6 +192,8 @@ export const createContentSlice: StateCreator<ContentSlice> = (set) => ({
       pages: [],
       loading: false,
       error: null,
+      sources: [],
+      selectedReadingEntry: null,
 
       selectedManga: null,
       selectedVolume: null,
