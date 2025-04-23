@@ -1,4 +1,7 @@
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import {
+  GoogleSignin,
+  SignInResponse,
+} from "@react-native-google-signin/google-signin";
 import { firebaseAuth } from "@/apis/auth/firebaseConfig";
 import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
 
@@ -22,12 +25,8 @@ GoogleSignin.configure({
 });
 
 export async function loginWithGoogleNative() {
-  console.log("EXPOCLIENT_ID: " + process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID);
-
   try {
-    console.log("Check Play Services...");
     await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-    console.log("Starting signIn...");
     const userInfo = await GoogleSignin.signIn();
     const userInfoData = userInfo.data;
     const idToken = userInfoData?.idToken;

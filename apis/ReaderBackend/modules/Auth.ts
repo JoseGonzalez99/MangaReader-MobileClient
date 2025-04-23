@@ -60,6 +60,5 @@ export const firebaseLogin = async (data: FirebaseLoginRequest): Promise<ApiSucc
     method: 'POST',
     data,
   });
-  console.log(res);
   return res
 };

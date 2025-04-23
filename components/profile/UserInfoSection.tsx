@@ -10,7 +10,7 @@ export default function UserInfoSection() {
   const user = useAppStore((s) => s.appUser);
 
   const [editing, setEditing] = useState(false)
-  const [fullName, setFullName] = useState('admin')
+  const [fullName, setFullName] = useState(user?.fullName||'')
   const [email, setEmail] = useState(user?.email || '')
   const [password, setPassword] = useState('')
   const [modalVisible, setModalVisible] = useState(false)

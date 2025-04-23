@@ -100,6 +100,10 @@ export interface AppUser{
     role:string;
     enabled:boolean;
     createdAt:string;
+    fullName:string;
+    photoUrl:string;
+    provider:string;
+    providerId:string;
 }
 
 

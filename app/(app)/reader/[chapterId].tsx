@@ -3,7 +3,7 @@ import { ChapterSourceSelector } from "@/components/reader/ChapterSourceSelector
 import ReaderChapterSelector from "@/components/reader/ReaderChapterSelector";
 import ReaderParams from "@/components/reader/ReaderParameters";
 import { ReaderTabs } from "@/components/reader/ReaderTabs";
-import { ChapterSourcePage, Manga } from "@/dtos/mangareader.dto";
+import { Manga } from "@/dtos/mangareader.dto";
 import { useAppStore } from "@/store/Slices";
 import { getNextChapter } from "@/utils/readerUtils";
 import { FontAwesome } from "@expo/vector-icons";

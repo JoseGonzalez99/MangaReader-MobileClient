@@ -1,11 +1,16 @@
-import { StateCreator } from 'zustand';
-import { ApiException } from '@/apis/ReaderBackend/core/types';
-import { isTokenValid } from '@/helpers/validateJwt';
-import { firebaseLogin, login, logout, register } from '@/apis/ReaderBackend/modules/Auth';
-import { userInfoApi } from '@/apis/ReaderBackend/modules/User';
+import { StateCreator } from "zustand";
+import { ApiException } from "@/apis/ReaderBackend/core/types";
+import { isTokenValid } from "@/helpers/validateJwt";
+import {
+  firebaseLogin,
+  login,
+  logout,
+  register,
+} from "@/apis/ReaderBackend/modules/Auth";
+import { userInfoApi } from "@/apis/ReaderBackend/modules/User";
 
-import { Storage } from '@/utils/storage';
-import { signInWithGoogle } from '@/apis/auth/signInWithGoogle';
+import { Storage } from "@/utils/storage";
+import { signInWithGoogle } from "@/apis/auth/signInWithGoogle";
 export interface AuthSlice {
   isAuthenticated: boolean;
   loading: boolean;
@@ -19,9 +24,10 @@ export interface AuthSlice {
   checkToken: () => Promise<void>;
 }
 
-export const createAuthSlice: StateCreator<AuthSlice, [], [], AuthSlice> = (set, get) => {
-
-
+export const createAuthSlice: StateCreator<AuthSlice, [], [], AuthSlice> = (
+  set,
+  get
+) => {
   return {
     isAuthenticated: false,
     loading: false,
@@ -40,20 +46,20 @@ export const createAuthSlice: StateCreator<AuthSlice, [], [], AuthSlice> = (set,
           console.error(err);
           set({ error: err });
         } else {
-          console.error('Unexpected error during login:', err);
+          console.error("Unexpected error during login:", err);
         }
       } finally {
         set({ loading: false });
       }
     },
-    loginWithGoogle:async ()=>{
+    loginWithGoogle: async () => {
       set({ loading: true, error: null });
       try {
-        const firebaseToken = await signInWithGoogle();
-
-        const response = await firebaseLogin({idToken:firebaseToken});
+        const firebaseToken = await signInWithGoogle(); // Se obtiene el token desde firebase
+        const response = await firebaseLogin({ idToken: firebaseToken });
         const { accessToken, refreshToken } = response.data;
-        await Storage.setItem("accessToken", accessToken);
+        //El codigo a partir de aca ya no se ejecuta, directamente salta al else dentro del catch
+        await Storage.setItem("accessToken", accessToken );
         await Storage.setItem("refreshToken", refreshToken);
         set({ isAuthenticated: true });
       } catch (err) {
@@ -61,7 +67,7 @@ export const createAuthSlice: StateCreator<AuthSlice, [], [], AuthSlice> = (set,
           console.error(err);
           set({ error: err });
         } else {
-          console.error('Unexpected error during login:', err);
+          console.error("Unexpected error during login:", err);
         }
       } finally {
         set({ loading: false });
@@ -74,16 +80,16 @@ export const createAuthSlice: StateCreator<AuthSlice, [], [], AuthSlice> = (set,
       try {
         const response = await register({ email, password });
         //const { accessToken, refreshToken } = response.data;
-//
-//        await SecureStore.setItemAsync('accessToken', accessToken);
-  //      await SecureStore.setItemAsync('refreshToken', refreshToken);
+        //
+        //        await SecureStore.setItemAsync('accessToken', accessToken);
+        //      await SecureStore.setItemAsync('refreshToken', refreshToken);
 
-   //     set({ isAuthenticated: true });
+        //     set({ isAuthenticated: true });
       } catch (err) {
         if (err instanceof ApiException) {
           set({ error: err });
         } else {
-          console.error('Unexpected error during register:', err);
+          console.error("Unexpected error during register:", err);
         }
       } finally {
         set({ loading: false });
@@ -92,30 +98,27 @@ export const createAuthSlice: StateCreator<AuthSlice, [], [], AuthSlice> = (set,
 
     logout: async () => {
       try {
-        await logout();//logout de mi useAuth
-
+        await logout(); //logout de mi useAuth
       } catch (err) {
-        console.warn('Logout error (continuando de todas formas):', err);
+        console.warn("Logout error (continuando de todas formas):", err);
       }
 
-      await Storage.deleteItem('accessToken');
-      await Storage.deleteItem('refreshToken');
+      await Storage.deleteItem("accessToken");
+      await Storage.deleteItem("refreshToken");
 
       set({ isAuthenticated: false });
     },
 
     checkToken: async () => {
-      const token = await Storage.getItem('accessToken');
+      const token = await Storage.getItem("accessToken");
       const isValid = token && isTokenValid(token);
 
       set({ isAuthenticated: Boolean(isValid) });
 
       if (!isValid) {
-        await Storage.deleteItem('accessToken');
-        await Storage.deleteItem('refreshToken');
-  
+        await Storage.deleteItem("accessToken");
+        await Storage.deleteItem("refreshToken");
       }
     },
   };
 };
-

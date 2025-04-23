@@ -39,12 +39,21 @@ export default function LoginForm() {
   };
 
   const handleOauthLogin = async () => {
-    console.log("onSubmit Ejecutado")
-    await loginWithGoogle();
-    console.log("login Ejecutado")
-    await fetchUser();
-    console.log("fetchUser Ejecutado")
-    router.replace("/(main)/home/");
+    try {
+      console.log("Iniciando login..")
+      await loginWithGoogle();
+      console.log("Iniciando fetchUser..")
+
+      await fetchUser();
+      router.replace("/(main)/home/");
+   } catch (error) {
+     if (error instanceof ApiException) {
+       alert(error.message);
+     } else {
+       alert("Error desconocido" + error);
+     }
+   }
+ 
   }
 
   return (
