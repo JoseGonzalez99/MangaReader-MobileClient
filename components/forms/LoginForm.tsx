@@ -5,11 +5,11 @@ import { loginSchema, LoginDTO } from "@/dtos/login.dto";
 import { useRouter } from "expo-router";
 import { ApiException } from "@/apis/ReaderBackend/core/types";
 import { useAppStore } from "@/store/Slices";
-import { loginWithGoogle } from "@/apis/auth/OuthLogin";
-
 export default function LoginForm() {
   const login = useAppStore((s) => s.login);
   const fetchUser = useAppStore((s) => s.fetchUser);
+  const loginWithGoogle = useAppStore((s) => s.loginWithGoogle);
+
 
   const router = useRouter();
 
@@ -39,8 +39,12 @@ export default function LoginForm() {
   };
 
   const handleOauthLogin = async () => {
-    const idToken = await loginWithGoogle()
-    console.log('ID Token:', idToken)
+    console.log("onSubmit Ejecutado")
+    await loginWithGoogle();
+    console.log("login Ejecutado")
+    await fetchUser();
+    console.log("fetchUser Ejecutado")
+    router.replace("/(main)/home/");
   }
 
   return (

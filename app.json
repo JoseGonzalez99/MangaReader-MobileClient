@@ -9,7 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.josego99.mangareader"
     },
     "android": {
       "adaptiveIcon": {
@@ -17,7 +18,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.josego99.mangareader",
-      "googleServicesFile":"google-services.json"
+      "googleServicesFile": "google-services.json"
     },
     "web": {
       "bundler": "metro",

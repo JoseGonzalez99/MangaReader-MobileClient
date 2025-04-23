@@ -7,6 +7,10 @@ interface LoginRequest {
   password: string;
 }
 
+interface FirebaseLoginRequest {
+  idToken: string;
+}
+
 interface LoginResponse {
   accessToken: string;
   refreshToken: string;
@@ -47,4 +51,15 @@ export const register = async (
   });
 
   return response;
+};
+
+export const firebaseLogin = async (data: FirebaseLoginRequest): Promise<ApiSuccessResponse<LoginResponse>> => {
+
+  const res= await mainApiRequest<LoginResponse>({
+    url: '/auth/firebase-login',
+    method: 'POST',
+    data,
+  });
+  console.log(res);
+  return res
 };

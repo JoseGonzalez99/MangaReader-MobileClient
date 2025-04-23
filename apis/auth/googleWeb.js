@@ -1,4 +1,4 @@
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { GoogleAuthProvider } from 'firebase/auth'
 import { firebaseAuth } from '@/apis/auth/firebaseConfig'
 
 export async function loginWithGoogleWeb() {
