@@ -6,6 +6,7 @@ import {
   login,
   logout,
   register,
+  RegisterRequest,
 } from "@/apis/ReaderBackend/modules/Auth";
 import { userInfoApi } from "@/apis/ReaderBackend/modules/User";
 
@@ -20,7 +21,7 @@ export interface AuthSlice {
   logout: () => Promise<void>;
   loginWithGoogle: () => Promise<void>;
 
-  register: (email: string, password: string) => Promise<void>;
+  register: (registerBody:RegisterRequest) => Promise<void>;
   checkToken: () => Promise<void>;
 }
 
@@ -75,11 +76,11 @@ export const createAuthSlice: StateCreator<AuthSlice, [], [], AuthSlice> = (
       }
     },
 
-    register: async (email, password) => {
+    register: async (registerBody:RegisterRequest) => {
       set({ loading: true, error: null });
 
       try {
-        const response = await register({ email, password });
+        const response = await register(registerBody);
         //const { accessToken, refreshToken } = response.data;
         //
         //        await SecureStore.setItemAsync('accessToken', accessToken);

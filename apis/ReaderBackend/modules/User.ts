@@ -2,6 +2,15 @@ import { AppUser, Preferences, ReadingEntry } from "@/dtos/mangareader.dto";
 import { mainApiRequest } from "../core/helpers";
 import { ApiSuccessResponse } from "../core/types";
 
+export interface UpdateProfileRequest{
+  email:string;
+  fullName:string;
+  photoUrl:string
+}
+export interface ResetPasswordRequest{
+  currentPassword:string;
+  newPassword:string;
+}
 
 export const userInfoApi = async (): Promise<
   ApiSuccessResponse<AppUser>
@@ -49,6 +58,28 @@ export const userUpdatePreferenceApi = async (
 ): Promise<ApiSuccessResponse<Preferences>> => {
   const response = await mainApiRequest<Preferences>({
     url: `/me/context/preferences`,
+    method: "PUT",
+    data: body,
+  });
+  return response;
+};
+
+export const userUpdateApi = async (
+  body: UpdateProfileRequest
+): Promise<ApiSuccessResponse<AppUser>> => {
+  const response = await mainApiRequest<AppUser>({
+    url: `/me`,
+    method: "PUT",
+    data: body,
+  });
+  return response;
+};
+
+export const userResetPasswordApi = async (
+  body: ResetPasswordRequest
+): Promise<ApiSuccessResponse<null>> => {
+  const response = await mainApiRequest<null>({
+    url: `/me`,
     method: "PUT",
     data: body,
   });

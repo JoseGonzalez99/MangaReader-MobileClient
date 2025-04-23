@@ -14,7 +14,6 @@ const firebaseConfig = {
 
 const firebaseApp = initializeApp(firebaseConfig)
 
-console.log(firebaseConfig)
 
 export const firebaseAuth =
   Platform.OS === 'web'

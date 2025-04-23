@@ -18,10 +18,13 @@ interface LoginResponse {
   expiresIn: number;
 }
 
-interface RegisterRequest {
-  email: string;
-  password: string;
+export interface RegisterRequest {
+  email:string;
+  fullName:string;
+  photoUrl:string;
+  password:string;
 }
+
 
 export const login = async (data: LoginRequest): Promise<ApiSuccessResponse<LoginResponse>> => {
 
@@ -40,6 +43,8 @@ export const logout = async (): Promise<ApiSuccessResponse<null>> => {
     method: 'POST',
   });
 };
+
+
 
 export const register = async (
   data: RegisterRequest
