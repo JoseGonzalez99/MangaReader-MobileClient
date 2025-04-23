@@ -5,6 +5,7 @@ import { loginSchema, LoginDTO } from "@/dtos/login.dto";
 import { useRouter } from "expo-router";
 import { ApiException } from "@/apis/ReaderBackend/core/types";
 import { useAppStore } from "@/store/Slices";
+import { loginWithGoogle } from "@/apis/auth/OuthLogin";
 
 export default function LoginForm() {
   const login = useAppStore((s) => s.login);
@@ -36,6 +37,11 @@ export default function LoginForm() {
       }
     }
   };
+
+  const handleOauthLogin = async () => {
+    const idToken = await loginWithGoogle()
+    console.log('ID Token:', idToken)
+  }
 
   return (
     <View className="px-12 gap-2">
@@ -85,6 +91,15 @@ export default function LoginForm() {
         <Text className="text-white font-bold">Iniciar Sesión</Text>
       </Pressable>
 
+      <Pressable
+        onPress={(e) => {
+          e.preventDefault?.(); // ← esto protege en web
+          handleOauthLogin();
+        }}
+        className="bg-primary p-3 rounded-xl mt-4 items-center"
+      >
+        <Text className="text-white font-bold">Iniciar con google</Text>
+      </Pressable>
       <Pressable
         onPress={() => router.push("/register")}
         className="mt-4 items-center"
