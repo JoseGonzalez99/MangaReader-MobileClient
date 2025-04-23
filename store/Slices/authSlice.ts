@@ -58,6 +58,7 @@ export const createAuthSlice: StateCreator<AuthSlice, [], [], AuthSlice> = (
         const firebaseToken = await signInWithGoogle(); // Se obtiene el token desde firebase
         const response = await firebaseLogin({ idToken: firebaseToken });
         const { accessToken, refreshToken } = response.data;
+        console.log(response.data)
         //El codigo a partir de aca ya no se ejecuta, directamente salta al else dentro del catch
         await Storage.setItem("accessToken", accessToken );
         await Storage.setItem("refreshToken", refreshToken);

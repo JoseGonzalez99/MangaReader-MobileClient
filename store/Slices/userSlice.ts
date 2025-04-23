@@ -38,6 +38,7 @@ export const createUserSlice: StateCreator<UserSlice> = (set) => ({
         userInfoApi(),
         userPreferencesApi(),
       ]);
+      console.log("usuario:",user.data)
 
       if (user) set({ appUser: user.data });
       if (preferences) set({ userPreferences: preferences.data });
