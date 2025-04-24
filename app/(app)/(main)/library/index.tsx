@@ -63,9 +63,9 @@ export default function LibraryScreen() {
   };
 
   return (
-    <View className="flex-1 bg-black p-4">
+    <View className="flex-1 bg-background p-4 pt-safe-or-10">
       {/* Search Bar */}
-      <View className="flex-row items-center bg-neutral-800 rounded-full px-4 py-2 mb-4">
+      <View className="flex-row items-center bg-neutral-800 rounded-full px-4 py-4 mb-4">
         <TextInput
           placeholder="Buscar manga o autor..."
           placeholderTextColor="#aaa"

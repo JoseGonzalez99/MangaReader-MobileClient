@@ -33,17 +33,17 @@ export default function VolumenScreen() {
   };
 
   return (
-    <View className="flex-1 bg-black">
+    <View className="flex-1 bg-background">
       <Image
         source={{ uri: selectedVolume?.coverUrl }} // Aquí va la portada del volumen
-        className="w-full h-60"
-        resizeMode="cover"
+        className="w-full h-3/6"
+        resizeMode="stretch"
       />
-      <Text className="text-white text-center text-3xl font-bold mt-2">
+      <Text className="text-white text-center text-3xl font-bold mt-4">
         Volumen {selectedVolume?.volumeNumber}
       </Text>
 
-      <Text className="text-white text-2xl font-bold mt-4 ml-4">Chapters</Text>
+      <Text className="text-white text-2xl font-bold mt-4 ml-4">Capitulos</Text>
 
       <FlatList
         data={chapters}
@@ -52,16 +52,15 @@ export default function VolumenScreen() {
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => handleChapterTouch(item)}
-            className="bg-zinc-900 border border-primary rounded-xl mx-4 my-3 p-3 flex-row items-center"
+            className=" mx-4 my-1 flex-row items-center"
           >
             <Image
-              source={{ uri: selectedManga?.faviconUrl }}
+              source={{ uri: selectedManga?.coverUrl }}
               className="w-16 h-16 rounded-md mr-4"
             />
 
             <View>
               <Text className="text-primary font-bold">{item.title}</Text>
-
             </View>
           </TouchableOpacity>
         )}

@@ -1,17 +1,14 @@
-import { View, Text, Image, TouchableOpacity, FlatList } from "react-native";
+import { View, Text, Image, TouchableOpacity, FlatList, ScrollView } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import SmallCoverCard from "@/components/atoms/SmallCoverCard";
 import { ReadingEntry, Volume } from "@/dtos/mangareader.dto";
-import Animated, { useAnimatedScrollHandler } from "react-native-reanimated";
-import { useScrollY } from "@/hooks/useScrollY";
 import { useAppStore } from "@/store/Slices";
 const MangaDetailScreen = () => {
   const { mangaId } = useLocalSearchParams<{ mangaId: string }>();
   const router = useRouter();
-  const scrollY = useScrollY();
   const [isFavorite, setIsFavorite] = useState(false);
   /*Lista de estados globales */
   const selectedManga = useAppStore((s) => s.selectedManga);
@@ -22,12 +19,6 @@ const MangaDetailScreen = () => {
 
   const [lecture, setLecture] = useState<ReadingEntry | null>(null);
   const volumesOfSelectedManga = useAppStore((s) => s.volumesOfSelectedManga);
-
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      scrollY.value = event.contentOffset.y;
-    },
-  });
 
   // Obtener mangas al renderizar
   useEffect(() => {
@@ -69,17 +60,16 @@ const MangaDetailScreen = () => {
   };
 
   return (
-    <Animated.ScrollView
-      onScroll={scrollHandler}
+    <ScrollView
       scrollEventThrottle={16}
       className="flex-1 bg-background"
       contentContainerStyle={{ paddingBottom: 60 }}
     >
       {/* Banner */}
-      <View className="pt-20 relative rounded-2xl overflow-hidden">
+      <View className="rounded-2xl overflow-hidden">
         <Image
           source={{ uri: selectedManga?.coverUrl }}
-          className="h-[240px] w-full rounded-2xl"
+          className="h-80 w-full rounded-2xl"
           resizeMode="cover"
         />
         <LinearGradient
@@ -108,7 +98,7 @@ const MangaDetailScreen = () => {
       </View>
 
       {/* Botones de acción */}
-      <View className="flex-row justify-between items-center mt-6 px-2">
+      <View className="flex-row justify-between items-center mt-4 px-2">
         <TouchableOpacity
           onPress={handleFavoriteTouch}
           className="bg-neutral-800 p-4 rounded-full shadow-sm"
@@ -131,7 +121,7 @@ const MangaDetailScreen = () => {
       </View>
 
       {/* Sinopsis */}
-      <View className="mt-8 px-2">
+      <View className="mt-4 px-2">
         <Text className="text-white text-2xl font-bold mb-2">Sinopsis</Text>
         <Text className="bg-neutral-800 text-white text-base leading-relaxed p-4 rounded-xl">
           {selectedManga?.description}
@@ -139,7 +129,7 @@ const MangaDetailScreen = () => {
       </View>
 
       {/* Volúmenes */}
-      <View className="mt-10 px-2">
+      <View className="mt-4 px-2">
         <Text className="text-white text-2xl font-bold mb-4">Volúmenes</Text>
         <FlatList
           data={volumesOfSelectedManga}
@@ -158,7 +148,7 @@ const MangaDetailScreen = () => {
           contentContainerStyle={{ paddingBottom: 20 }}
         />
       </View>
-    </Animated.ScrollView>
+    </ScrollView>
   );
 };
 

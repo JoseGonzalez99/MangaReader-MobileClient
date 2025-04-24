@@ -1,51 +1,38 @@
 import { Stack } from "expo-router";
-import {  Text, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import Animated, {
-  useAnimatedStyle,
-  interpolate,
-} from "react-native-reanimated";
-import { useScrollY } from "@/hooks/useScrollY";
-
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function MangaLayout() {
   const router = useRouter();
-  const scrollY = useScrollY();
-  const animatedHeaderStyle = useAnimatedStyle(() => {
-    const opacity = interpolate(scrollY.value, [0, 100], [0, 1]);
-    return {
-      backgroundColor: `rgba(0, 0, 0, ${opacity})`,
-    };
-  });
-
   return (
     <Stack
       screenOptions={{
         header: () => (
-          <Animated.View
-            style={[
-              {
-                padding:16,
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                zIndex: 10,
-              },
-              animatedHeaderStyle,
-            ]}
+          <LinearGradient
+            colors={["#171717", "transparent"]}
+            style={{
+              paddingTop: 32,
+              paddingHorizontal: 16,
+              paddingBottom: 12,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              zIndex: 10,
+            }}
           >
             <TouchableOpacity onPress={() => router.back()}>
-              <Entypo name="chevron-left" size={34} color="white" />
+              <Entypo name="chevron-left" size={35} color="white" />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => console.log("Compartir")}>
               <Entypo name="share" size={30} color="white" />
             </TouchableOpacity>
-          </Animated.View>
+          </LinearGradient>
         ),
         headerTransparent: true, // 👈 Asegura que el header sea "flotante"
       }}
