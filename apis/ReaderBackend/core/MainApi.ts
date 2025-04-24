@@ -25,7 +25,7 @@ mainApi.interceptors.response.use(
       const refreshToken = await  Storage.getItem('refreshToken');
       if (refreshToken) {
         try {
-          const refreshResponse = await axios.post('https://tudominio.com/api/v1/auth/refresh', {
+          const refreshResponse = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/auth/refresh`, {
             refreshToken,
           });
 

@@ -1,17 +1,23 @@
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { View, TextInput, Pressable, Text,Image } from "react-native";
+import {
+  View,
+  TextInput,
+  Pressable,
+  Text,
+  Image,
+  Platform,
+} from "react-native";
 import { loginSchema, LoginDTO } from "@/dtos/login.dto";
 import { useRouter } from "expo-router";
 import { ApiException } from "@/apis/ReaderBackend/core/types";
 import { useAppStore } from "@/store/Slices";
-import googleLogo from "@/assets/google.png"
+import googleLogo from "@/assets/google.png";
 
 export default function LoginForm() {
   const login = useAppStore((s) => s.login);
   const fetchUser = useAppStore((s) => s.fetchUser);
   const loginWithGoogle = useAppStore((s) => s.loginWithGoogle);
-
 
   const router = useRouter();
 
@@ -42,15 +48,14 @@ export default function LoginForm() {
       await loginWithGoogle();
       await fetchUser();
       router.replace("/(main)/home/");
-   } catch (error) {
-     if (error instanceof ApiException) {
-       alert(error.message);
-     } else {
-       alert("Error desconocido" + error);
-     }
-   }
- 
-  }
+    } catch (error) {
+      if (error instanceof ApiException) {
+        alert(error.message);
+      } else {
+        alert("Error desconocido" + error);
+      }
+    }
+  };
 
   return (
     <View className="px-12 gap-2">
@@ -100,19 +105,24 @@ export default function LoginForm() {
         <Text className="text-white font-bold">Iniciar Sesión</Text>
       </Pressable>
 
-      <Pressable
-  onPress={(e) => {
-    e.preventDefault?.(); // ← protege en web
-    handleOauthLogin();
-  }}
-  className="bg-white border border-gray-300 rounded-xl flex-row items-center justify-center p-3 mt-4"
->
-  <Image
-    source={googleLogo}
-    style={{ width: 20, height: 20, marginRight: 8 }}
-  />
-  <Text className="text-gray-800 font-semibold">Continuar con Google</Text>
-</Pressable>
+      {Platform.OS === "android" && (
+        <Pressable
+          onPress={(e) => {
+            e.preventDefault?.(); // ← protege en web
+            handleOauthLogin();
+          }}
+          className="bg-white border border-gray-300 rounded-xl flex-row items-center justify-center p-3 mt-4"
+        >
+          <Image
+            source={googleLogo}
+            style={{ width: 20, height: 20, marginRight: 8 }}
+          />
+          <Text className="text-gray-800 font-semibold">
+            Continuar con Google
+          </Text>
+        </Pressable>
+      )}
+
       <Pressable
         onPress={() => router.push("/register")}
         className="mt-4 items-center"

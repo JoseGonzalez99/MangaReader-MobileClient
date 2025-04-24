@@ -2,10 +2,13 @@ import { useAppStore } from "@/store/Slices";
 import { getNextChapter } from "@/utils/readerUtils";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { ChapterSourceSelector } from "@/components/reader/ChapterSourceSelector";
 import ReaderDrawers from "@/components/reader/ReaderDrawers";
-import ImageViewer from "@/components/reader/ImageViewer/index";
+
+import type { ImageViewerProps } from "@/components/reader/ImageViewer/types";
+
+
 export default function ReaderScreen() {
   const selectedChapter = useAppStore((s) => s.selectedChapter);
   const selectedManga = useAppStore((s) => s.selectedManga);
@@ -23,6 +26,12 @@ export default function ReaderScreen() {
   const [showReaderTabs, setShowReaderTabs] = useState(true);
   const [showChaptersDrawer, setShowChaptersDrawer] = useState(false);
   const [showParamsDrawer, setShowParamsDrawer] = useState(false);
+
+  const ImageViewer = Platform.OS === "web"
+  ? require("@/components/reader/ImageViewer/ImageViewer.web").default
+  : require("@/components/reader/ImageViewer/ImageViewer.native").default;
+
+
 
   useEffect(() => {
     if (selectedManga) fetchAllChaptersOfManga(selectedManga.id);
