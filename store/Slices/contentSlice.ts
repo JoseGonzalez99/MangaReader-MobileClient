@@ -49,6 +49,7 @@ export interface ContentSlice {
   fetchChaptersSources: (chapterId: string) => Promise<void>;
   fetchChapterById: (chapterId: string) => Promise<void>;
 
+  startNewLecture:(mangaId: string) => Promise<void>;
   fetchAllChaptersOfManga: (mangaId: string) => Promise<void>;
   clearContent: () => void;
 }
@@ -177,6 +178,21 @@ export const createContentSlice: StateCreator<ContentSlice> = (set,get) => ({
     try {
       const data = await getAllChapterByMangaId(mangaId);
       set({ chapters: data.data });
+    } catch (err) {
+      if (err instanceof ApiException) set({ error: err });
+      else console.error("[contentSlice] Error cargando páginas:", err);
+    } finally {
+      set({ loading: false });
+    }
+  },
+  startNewLecture: async (mangaId) => {
+    set({ loading: true, error: null });
+    try {
+      const data = await getAllChapterByMangaId(mangaId);
+      set({ chapters: data.data });
+      set({ selectedChapter: data.data[0] });
+
+      
     } catch (err) {
       if (err instanceof ApiException) set({ error: err });
       else console.error("[contentSlice] Error cargando páginas:", err);

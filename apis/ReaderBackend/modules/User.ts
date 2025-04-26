@@ -85,3 +85,33 @@ export const userResetPasswordApi = async (
   });
   return response;
 };
+
+
+export const userisLikedMangaApi = async (
+  mangaId: String
+): Promise<ApiSuccessResponse<boolean>> => {
+  const response = await mainApiRequest<boolean>({
+    url: `/me/likes/${mangaId}`,
+    method: "GET",
+  });
+  return response;
+};
+
+export const userLikeMangaApi = async (
+  mangaId: String
+): Promise<ApiSuccessResponse<null>> => {
+  const response = await mainApiRequest<null>({
+    url: `/me/likes/${mangaId}`,
+    method: "POST",
+  });
+  return response;
+};
+export const userDisikeMangaApi = async (
+  mangaId: String
+): Promise<ApiSuccessResponse<null>> => {
+  const response = await mainApiRequest<null>({
+    url: `/me/likes/${mangaId}`,
+    method: "DELETE",
+  });
+  return response;
+};

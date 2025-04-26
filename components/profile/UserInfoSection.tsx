@@ -30,18 +30,38 @@ export default function UserInfoSection() {
     <View className="relative px-4 py-6">
 
       <View className={`space-y-6 ${editing ? "z-20 relative" : ""}`}>
-        {editing ? (
-          <ProfileForm user={user as AppUser} setEditing={setEditing} />
-        ) : (
-          <ProfileDisplay
+      <ProfileDisplay
           user={user as AppUser}
           
             onEdit={() => setEditing(true)}
             onReset={() => setPasswordModalVisible(true)}
             onLogout={handleLogout}
           />
-        )}
       </View>
+
+      <Modal
+        visible={editing}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setPasswordModalVisible(false)}
+      >
+        <View className="flex-1 justify-center items-center bg-black/70 px-6">
+          <View className="bg-zinc-900 rounded-xl p-6 w-full max-w-md">
+            <Text className="text-white text-lg font-bold mb-4">
+              Actualizar informacion
+            </Text>
+            <ProfileForm user={user as AppUser} setEditing={setEditing} />
+
+
+            <Pressable
+              onPress={() => setEditing(false)}
+              className="mt-4 bg-zinc-700 py-2 rounded"
+            >
+              <Text className="text-center text-white">Cancelar</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
 
       <Modal
         visible={passwordModalVisible}

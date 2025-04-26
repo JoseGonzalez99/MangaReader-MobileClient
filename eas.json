@@ -1,0 +1,31 @@
+{
+  "cli": {
+    "version": ">= 16.1.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_URL":"https://jaitymangareader-latest.onrender.com/api/v1",
+        "EXPO_PUBLIC_FIREBASE_API_KEY":"AIzaSyBPK-MqvqTwkU0CJ8hVSohlI2N9rolxLew",
+        "EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN":"jmanga-7d2f0.firebaseapp.com",
+        "EXPO_PUBLIC_FIREBASE_PROJECT_ID":"jmanga-7d2f0",
+        "EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET":"jmanga-7d2f0.firebasestorage.app",
+        "EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID":"668018243756",
+        "EXPO_PUBLIC_FIREBASE_APP_ID": "1:668018243756:web:36e2612167cbe9ef674709",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID":"668018243756-dj1ea0sq71ql1qcho0lktge0t6ekr768.apps.googleusercontent.com"
+      }
+    },
+    "production": {
+      "autoIncrement": true
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

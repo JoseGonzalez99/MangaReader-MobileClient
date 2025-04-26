@@ -4,8 +4,11 @@ import { ApiException } from "@/apis/ReaderBackend/core/types";
 import {
   ResetPasswordRequest,
   UpdateProfileRequest,
+  userDisikeMangaApi,
   userInfoApi,
+  userisLikedMangaApi,
   userLastReadApi,
+  userLikeMangaApi,
   userPreferencesApi,
   userReadingHistoryApi,
   userResetPasswordApi,
@@ -21,14 +24,15 @@ export interface UserSlice {
 
   fetchUser: () => Promise<void>;
   fetchUserPreferences: () => Promise<void>;
-  updateUserPreferences: (readingDirection:  "ltr"|"rtl") => Promise<void>;
-  updateUser: (appUser:UpdateProfileRequest ) => Promise<void>;
-  resetPassword:(passwordBody:ResetPasswordRequest)  => Promise<void>;
-   
+  updateUserPreferences: (readingDirection: "ltr" | "rtl") => Promise<void>;
+  updateUser: (appUser: UpdateProfileRequest) => Promise<void>;
+  resetPassword: (passwordBody: ResetPasswordRequest) => Promise<void>;
+
   fetchLastRead: () => Promise<ReadingEntry | null>;
   fetchReadingHistory: () => Promise<ReadingEntry[]>;
   isInProgress: (mangaId: string) => Promise<ReadingEntry | null>;
-
+  toggleLike: (mangaId: string, liked: boolean) => Promise<void>;
+  likeStatus: (mangaId: string) => Promise<boolean>;
   clearUser: () => void;
 }
 
@@ -55,7 +59,7 @@ export const createUserSlice: StateCreator<UserSlice> = (set) => ({
     }
   },
 
-  updateUser: async( updateUserBody:UpdateProfileRequest)=>{
+  updateUser: async (updateUserBody: UpdateProfileRequest) => {
     try {
       const updatedUser = await userUpdateApi(updateUserBody);
       if (updatedUser) {
@@ -64,10 +68,9 @@ export const createUserSlice: StateCreator<UserSlice> = (set) => ({
     } catch (err) {
       if (err instanceof ApiException) set({ userError: err });
       else console.error("[userSlice] Unexpected error:", err);
-    } 
-
+    }
   },
-  resetPassword: async( resetPassword:ResetPasswordRequest)=>{
+  resetPassword: async (resetPassword: ResetPasswordRequest) => {
     try {
       const updatedUser = await userResetPasswordApi(resetPassword);
       if (updatedUser) {
@@ -76,8 +79,7 @@ export const createUserSlice: StateCreator<UserSlice> = (set) => ({
     } catch (err) {
       if (err instanceof ApiException) set({ userError: err });
       else console.error("[userSlice] Unexpected error:", err);
-    } 
-
+    }
   },
   fetchUserPreferences: async () => {
     set({ userLoading: true, userError: null });
@@ -92,7 +94,7 @@ export const createUserSlice: StateCreator<UserSlice> = (set) => ({
     }
   },
 
-  updateUserPreferences: async (readingDirection: "ltr"|"rtl") => {
+  updateUserPreferences: async (readingDirection: "ltr" | "rtl") => {
     set({ userLoading: true, userError: null });
 
     try {
@@ -153,6 +155,42 @@ export const createUserSlice: StateCreator<UserSlice> = (set) => ({
       if (err instanceof ApiException) set({ userError: err });
       else console.error("[userSlice] Unexpected error:", err);
       return null;
+    } finally {
+      set({ userLoading: false });
+    }
+  },
+  likeStatus: async (mangaId: string ): Promise<boolean> => {
+    set({ userLoading: true, userError: null });
+    try {
+        const res = await userisLikedMangaApi(mangaId);
+       if(res){
+        return res.data;
+       }else{
+        return false;
+       }
+    } catch (err) {
+      if (err instanceof ApiException) set({ userError: err });
+      else console.error("[userSlice] Unexpected error:", err);
+      return false;
+    } finally {
+      set({ userLoading: false });
+    }
+  },
+  toggleLike: async (mangaId: string, liked: boolean): Promise<void> => {
+    set({ userLoading: true, userError: null });
+    try {
+      if (!liked) {
+        console.log("Intentando Like")
+
+         await userLikeMangaApi(mangaId);
+      } else {
+        console.log("Intentando dislike")
+
+         await userDisikeMangaApi(mangaId);
+      }
+    } catch (err) {
+      if (err instanceof ApiException) set({ userError: err });
+      else console.error("[userSlice] Unexpected error:", err);
     } finally {
       set({ userLoading: false });
     }

@@ -13,7 +13,7 @@ export default function MangaLayout() {
           <LinearGradient
             colors={["#171717", "transparent"]}
             style={{
-              paddingTop: 32,
+              paddingTop: 46,
               paddingHorizontal: 16,
               paddingBottom: 12,
               flexDirection: "row",

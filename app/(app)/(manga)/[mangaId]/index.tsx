@@ -6,6 +6,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import SmallCoverCard from "@/components/atoms/SmallCoverCard";
 import { ReadingEntry, Volume } from "@/dtos/mangareader.dto";
 import { useAppStore } from "@/store/Slices";
+import { SmallSpinner } from "@/components/atoms/LoadingSpinner";
 const MangaDetailScreen = () => {
   const { mangaId } = useLocalSearchParams<{ mangaId: string }>();
   const router = useRouter();
@@ -16,11 +17,19 @@ const MangaDetailScreen = () => {
   const fetchVolumesByMangaId = useAppStore((s) => s.fetchVolumesByMangaId);
   const fetchChapterById = useAppStore((s) => s.fetchChapterById);
   const isInProgress = useAppStore((s) => s.isInProgress);
+  const startNewLecture = useAppStore((s) => s.startNewLecture);
+  const likeStatus = useAppStore((s) => s.likeStatus);
+  const toggleLike = useAppStore((s) => s.toggleLike);
+  
+  const userLoading = useAppStore((s) => s.userLoading);
+  const loading = useAppStore((s) => s.loading);
+
+
 
   const [lecture, setLecture] = useState<ReadingEntry | null>(null);
   const volumesOfSelectedManga = useAppStore((s) => s.volumesOfSelectedManga);
 
-  // Obtener mangas al renderizar
+  // Obtener volumenes al renderizar
   useEffect(() => {
     const getVolumes = async () => {
       try {
@@ -31,27 +40,54 @@ const MangaDetailScreen = () => {
     };
     getVolumes();
   }, []);
+  
 
+  //Verificamos si ya haba leido o no
   useEffect(() => {
     const checkIsReadInProgress = async () => {
       if (selectedManga) {
         const res = await isInProgress(selectedManga.id);
-        setLecture(res);
+        if(res!=null){
+          await fetchChapterById(res.chapterId);
+
+        }else{
+          await startNewLecture(selectedManga.id);
+        }
+        setLecture(res)
+       ;
       }
     };
     checkIsReadInProgress();
   }, [selectedManga]);
 
+    //Verificamos el estado inicial de si es favorito o no
+    useEffect(() => {
+      const checkIsInFavorites = async () => {
+        if (selectedManga) {
+          const res = await likeStatus(selectedManga.id);
+          console.log("Like status del useEffect", res)
+
+          if(res!=null){
+            setIsFavorite(res)
+          }
+         ;
+        }
+      };
+      checkIsInFavorites();
+    }, []);//Se ejecuta una ves.
+
   const handleRead = async () => {
     // lógica para continuar o comenzar lectura
-    if (lecture != null) {
-      await fetchChapterById(lecture.chapterId);
-      router.push(`/(app)/reader/${lecture.chapterId}`);
-    }
+    router.push(`/(app)/reader/newRead`);
+    
   };
 
-  const handleFavoriteTouch = () => {
-    setIsFavorite(!isFavorite);
+  const handleFavoriteTouch = async () => {
+    
+   await toggleLike(selectedManga?.id as string,isFavorite);
+   const res = await likeStatus(selectedManga?.id as string);
+   console.log("Respuesta de like status",res)
+    setIsFavorite(res)
   };
 
   const handleVolumenTouch = (entry: Volume) => {
@@ -103,20 +139,25 @@ const MangaDetailScreen = () => {
           onPress={handleFavoriteTouch}
           className="bg-neutral-800 p-4 rounded-full shadow-sm"
         >
-          <FontAwesome
+          {userLoading?(
+            <SmallSpinner/>
+          ):(<FontAwesome
             name="heart"
             size={20}
-            color={isFavorite ? "white" : "#aaa"}
-          />
+            color={isFavorite ? "#DA0037" : "white"}
+          />)}
+          
         </TouchableOpacity>
 
         <TouchableOpacity
           onPress={handleRead}
           className="bg-primary px-6 py-4 rounded-full shadow-md"
         >
-          <Text className="text-white text-lg font-bold">
+            {loading?(
+            <SmallSpinner/>
+          ):(<Text className="text-white text-lg font-bold">
             {lecture ? "Continuar" : "Leer"}
-          </Text>
+          </Text>)}
         </TouchableOpacity>
       </View>
 
