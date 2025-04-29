@@ -8,11 +8,13 @@ node_modules/
 dist/
 web-build/
 expo-env.d.ts\
+eas.json
 
 #BUILDS
 android/
 ios/
 
+*.apk
 # Native
 *.orig.*
 *.jks
