@@ -1,11 +1,19 @@
-import { Controller, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { View, TextInput, Pressable, Text, ScrollView, Image } from 'react-native';
-import { registerSchema, RegisterDTO } from '@/dtos/register.dto';
-import { useRouter } from 'expo-router';
-import { ApiException } from '@/apis/ReaderBackend/core/types';
-import { useAppStore } from '@/store/Slices';
-import { useState } from 'react';
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import {
+  View,
+  TextInput,
+  Pressable,
+  Text,
+  ScrollView,
+  Image,
+  ActivityIndicator,
+} from "react-native";
+import { registerSchema, RegisterDTO } from "@/dtos/register.dto";
+import { useRouter } from "expo-router";
+import { ApiException } from "@/apis/ReaderBackend/core/types";
+import { useAppStore } from "@/store/Slices";
+import { useCallback, useState } from "react";
 
 const avatarOptions = [
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCPNWn6F9vTmb13dmy3Qbzdh9om-Nr5juSDdIlzTjrHcS9Qrr4AZW1K4YVZbUdEwPAnBE&usqp=CAU",
@@ -15,133 +23,202 @@ const avatarOptions = [
 
 export default function RegisterForm() {
   const register = useAppStore((s) => s.register);
+  const login = useAppStore((s) => s.login);
+  const fetchUser = useAppStore((s) => s.fetchUser);
+
   const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const {
     control,
     handleSubmit,
     setValue,
     watch,
-    formState: { errors }
+    formState: { errors },
   } = useForm<RegisterDTO>({
     resolver: yupResolver(registerSchema),
     defaultValues: {
-      photoUrl: ''
-    }
+      photoUrl: "",
+    },
   });
 
   const selectedPhoto = watch("photoUrl");
 
+  // Ahora sí: loadData usando useCallback
+  const signIn = useCallback(
+    async (data: RegisterDTO) => {
+      try {
+        setLoading(true);
+        await register({
+          email: data.email,
+          password: data.password,
+          fullName: data.fullName,
+          photoUrl: data.photoUrl,
+        });
+      } catch (e) {
+        throw e;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [register]
+  );
+
   const onSubmit = async (data: RegisterDTO) => {
     try {
-      await register(
-        {email:data.email,password: data.password,fullName: data.fullName,photoUrl: data.photoUrl});
-      router.replace('/home');
+      setLoading(true);
+
+      await register({
+        email: data.email,
+        password: data.password,
+        fullName: data.fullName,
+        photoUrl: data.photoUrl,
+      });
+
+      await login(data.email, data.password);
+      await fetchUser();
     } catch (error) {
       if (error instanceof ApiException) {
         alert(error.message);
       } else {
-        alert('Error desconocido');
+        alert("Error desconocido");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <View className="px-6 gap-2">
-      {/* fullName */}
-      <Controller
-        control={control}
-        name="fullName"
-        render={({ field: { onChange, value } }) => (
-          <TextInput
-            placeholder="Nombre completo"
-            className="bg-secondary px-4 py-2 text-white rounded-xl"
-            placeholderTextColor="#ccc"
-            onChangeText={onChange}
-            value={value}
+    <>
+      {loading ? (
+        <View className="flex-1 justify-center items-center mt-20">
+          <ActivityIndicator size="large" color="#ffffff" />
+          <Text className="text-white mt-4">Registro en proceso...</Text>
+        </View>
+      ) : (
+        <View className="px-6 gap-2">
+          {/* fullName */}
+          <Controller
+            control={control}
+            name="fullName"
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                placeholder="Nombre completo"
+                className="bg-secondary px-4 py-2 text-white rounded-xl"
+                placeholderTextColor="#ccc"
+                onChangeText={onChange}
+                value={value}
+              />
+            )}
           />
-        )}
-      />
-      {errors.fullName && <Text className="text-red-500">{errors.fullName.message}</Text>}
+          {errors.fullName && (
+            <Text className="text-red-500">{errors.fullName.message}</Text>
+          )}
 
-      {/* Avatares */}
-      <Text className="text-white mt-2 mb-1">Selecciona tu avatar:</Text>
-      <ScrollView horizontal className="space-x-4 mb-2" showsHorizontalScrollIndicator={false}>
-        {avatarOptions.map((url) => (
-          <Pressable
-            key={url}
-            onPress={() => setValue("photoUrl", url)}
-            className={`p-1 rounded-full border-2 ${selectedPhoto === url ? 'border-blue-500' : 'border-transparent'}`}
+          {/* Avatares */}
+          <Text className="text-white mt-2 mb-1">Selecciona tu avatar:</Text>
+          <ScrollView
+            horizontal
+            className="space-x-4 mb-2"
+            showsHorizontalScrollIndicator={false}
           >
-            <Image source={{ uri: url }} className="w-16 h-16 rounded-full" />
+            {avatarOptions.map((url) => (
+              <Pressable
+                key={url}
+                onPress={() => setValue("photoUrl", url)}
+                className={`p-1 rounded-full border-2 ${
+                  selectedPhoto === url
+                    ? "border-blue-500"
+                    : "border-transparent"
+                }`}
+              >
+                <Image
+                  source={{ uri: url }}
+                  className="w-16 h-16 rounded-full"
+                />
+              </Pressable>
+            ))}
+          </ScrollView>
+          {errors.photoUrl && (
+            <Text className="text-red-500">{errors.photoUrl.message}</Text>
+          )}
+
+          {/* Email */}
+          <Controller
+            control={control}
+            name="email"
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                placeholder="Email"
+                className="bg-secondary px-4 py-2 text-white rounded-xl"
+                placeholderTextColor="#ccc"
+                onChangeText={onChange}
+                value={value}
+                autoCapitalize="none"
+              />
+            )}
+          />
+          {errors.email && (
+            <Text className="text-red-500">{errors.email.message}</Text>
+          )}
+
+          {/* Password */}
+          <Controller
+            control={control}
+            name="password"
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                placeholder="Contraseña"
+                className="bg-secondary px-4 py-2 text-white rounded-xl"
+                placeholderTextColor="#ccc"
+                onChangeText={onChange}
+                value={value}
+                secureTextEntry
+              />
+            )}
+          />
+          {errors.password && (
+            <Text className="text-red-500">{errors.password.message}</Text>
+          )}
+
+          {/* Confirmar Password */}
+          <Controller
+            control={control}
+            name="confirmPassword"
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                placeholder="Confirmar contraseña"
+                className="bg-secondary px-4 py-2 text-white rounded-xl"
+                placeholderTextColor="#ccc"
+                onChangeText={onChange}
+                value={value}
+                secureTextEntry
+              />
+            )}
+          />
+          {errors.confirmPassword && (
+            <Text className="text-red-500">
+              {errors.confirmPassword.message}
+            </Text>
+          )}
+
+          <Pressable
+            className="bg-primary p-3 rounded-xl mt-4 items-center"
+            onPress={handleSubmit(onSubmit)}
+          >
+            <Text className="text-white font-bold">Registrarse</Text>
           </Pressable>
-        ))}
-      </ScrollView>
-      {errors.photoUrl && <Text className="text-red-500">{errors.photoUrl.message}</Text>}
 
-      {/* Email */}
-      <Controller
-        control={control}
-        name="email"
-        render={({ field: { onChange, value } }) => (
-          <TextInput
-            placeholder="Email"
-            className="bg-secondary px-4 py-2 text-white rounded-xl"
-            placeholderTextColor="#ccc"
-            onChangeText={onChange}
-            value={value}
-            autoCapitalize="none"
-          />
-        )}
-      />
-      {errors.email && <Text className="text-red-500">{errors.email.message}</Text>}
-
-      {/* Password */}
-      <Controller
-        control={control}
-        name="password"
-        render={({ field: { onChange, value } }) => (
-          <TextInput
-            placeholder="Contraseña"
-            className="bg-secondary px-4 py-2 text-white rounded-xl"
-            placeholderTextColor="#ccc"
-            onChangeText={onChange}
-            value={value}
-            secureTextEntry
-          />
-        )}
-      />
-      {errors.password && <Text className="text-red-500">{errors.password.message}</Text>}
-
-      {/* Confirmar Password */}
-      <Controller
-        control={control}
-        name="confirmPassword"
-        render={({ field: { onChange, value } }) => (
-          <TextInput
-            placeholder="Confirmar contraseña"
-            className="bg-secondary px-4 py-2 text-white rounded-xl"
-            placeholderTextColor="#ccc"
-            onChangeText={onChange}
-            value={value}
-            secureTextEntry
-          />
-        )}
-      />
-      {errors.confirmPassword && (
-        <Text className="text-red-500">{errors.confirmPassword.message}</Text>
+          <Pressable
+            onPress={() => router.push("/login")}
+            className="mt-4 items-center"
+          >
+            <Text className="text-sm text-text underline">
+              ¿Ya tienes cuenta? Iniciar sesión
+            </Text>
+          </Pressable>
+        </View>
       )}
-
-      <Pressable
-        className="bg-primary p-3 rounded-xl mt-4 items-center"
-        onPress={handleSubmit(onSubmit)}
-      >
-        <Text className="text-white font-bold">Registrarse</Text>
-      </Pressable>
-
-      <Pressable onPress={() => router.push('/login')} className="mt-4 items-center">
-        <Text className="text-sm text-text underline">¿Ya tienes cuenta? Iniciar sesión</Text>
-      </Pressable>
-    </View>
+    </>
   );
 }

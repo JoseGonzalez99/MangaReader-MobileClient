@@ -97,7 +97,7 @@ export default function HomeScreen() {
                 <SmallCoverCard title={item.mangaTitle} image={item.coverUrl} />
               </TouchableOpacity>
             )}
-            keyExtractor={(index) => index.toString()}
+            keyExtractor={(item) => item.chapterId}
             horizontal
             contentContainerStyle={{ paddingBottom: 20, gap: 15 }}
             showsHorizontalScrollIndicator={false}
@@ -120,7 +120,7 @@ export default function HomeScreen() {
                 <SmallCoverCard title={item.mangaTitle} image={item.coverUrl} />
               </TouchableOpacity>
             )}
-            keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(item) => item.chapterId}
             horizontal
             contentContainerStyle={{ paddingBottom: 20, gap: 15 }}
             showsHorizontalScrollIndicator={false}

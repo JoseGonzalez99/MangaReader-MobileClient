@@ -18,6 +18,7 @@ import {
   getPagesByChapter,
   getVolumesByMangaId,
 } from "@/apis/ReaderBackend/modules/Content";
+import { sortChaptersAscending } from "@/utils/readerUtils";
 
 export interface ContentSlice {
   loading: boolean;
@@ -121,7 +122,9 @@ export const createContentSlice: StateCreator<ContentSlice> = (set,get) => ({
     set({ loading: true, error: null });
     try {
       const data = await getChapterbyVolumenId(volumeId);
-      set({ chapters: data.data });
+      set({ chapters: 
+        sortChaptersAscending(data.data)
+       });
     } catch (err) {
       if (err instanceof ApiException) set({ error: err });
       else console.error("[contentSlice] Error cargando capítulos:", err);

@@ -29,9 +29,12 @@ export default function MangaLayout() {
             <TouchableOpacity onPress={() => router.back()}>
               <Entypo name="chevron-left" size={35} color="white" />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => console.log("Compartir")}>
+            {/*
+               <TouchableOpacity onPress={() => console.log("Compartir")}>
               <Entypo name="share" size={30} color="white" />
             </TouchableOpacity>
+            */}
+         
           </LinearGradient>
         ),
         headerTransparent: true, // 👈 Asegura que el header sea "flotante"

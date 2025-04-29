@@ -105,21 +105,22 @@ export default function LibraryScreen() {
           {error.message}
         </Text>
       ) : (
-        <FlatList
-          data={filtered}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          columnWrapperStyle={{ justifyContent: "space-between" }}
-          contentContainerStyle={{ paddingBottom: 80 }}
-          renderItem={({ item }) => (
-            <Pressable
-              onPress={() => selectManga(item)}
-              className="mb-6 w-[48%]"
-            >
-              <SmallCoverCard title={item.title} image={item.coverUrl} />
-            </Pressable>
-          )}
-        />
+        <View className="pl-10">
+          <FlatList
+            data={filtered}
+            keyExtractor={(item) => item.id}
+            numColumns={2}
+            contentContainerStyle={{ paddingBottom: 80 }}
+            renderItem={({ item }) => (
+              <Pressable
+                onPress={() => selectManga(item)}
+                className="mb-6 w-[48%]"
+              >
+                <SmallCoverCard title={item.title} image={item.coverUrl} />
+              </Pressable>
+            )}
+          />
+        </View>
       )}
     </View>
   );

@@ -23,3 +23,7 @@ export function getPreviousChapter(
 
   return chapters[index - 1];
 }
+
+export function sortChaptersAscending(chapters: Chapter[]): Chapter[] {
+  return [...chapters].sort((a, b) => a.chapterNumber - b.chapterNumber);
+}

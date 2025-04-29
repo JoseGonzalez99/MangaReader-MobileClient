@@ -1,6 +1,6 @@
 import { View, Text, Image, TouchableOpacity, FlatList, ScrollView } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import SmallCoverCard from "@/components/atoms/SmallCoverCard";
@@ -20,73 +20,70 @@ const MangaDetailScreen = () => {
   const startNewLecture = useAppStore((s) => s.startNewLecture);
   const likeStatus = useAppStore((s) => s.likeStatus);
   const toggleLike = useAppStore((s) => s.toggleLike);
-  
-  const userLoading = useAppStore((s) => s.userLoading);
-  const loading = useAppStore((s) => s.loading);
-
 
 
   const [lecture, setLecture] = useState<ReadingEntry | null>(null);
   const volumesOfSelectedManga = useAppStore((s) => s.volumesOfSelectedManga);
 
+  const [loading,setLoading]= useState<boolean>(false);
+
+  const getVolumes = useCallback(async () => {
+    await fetchVolumesByMangaId(mangaId);
+  }, [fetchVolumesByMangaId, mangaId]);
+
+  const checkIsInFavorites = useCallback(async () => {
+    if (selectedManga) {
+      const res = await likeStatus(selectedManga.id);
+      if (res != null) {
+        setIsFavorite(res);
+      }
+    }
+  }, [selectedManga, likeStatus]);
+
+  const checkIsReadInProgress = useCallback(async () => {
+    if (selectedManga) {
+      const res = await isInProgress(selectedManga.id);
+      if (res != null) {
+        await fetchChapterById(res.chapterId);
+      } else {
+        await startNewLecture(selectedManga.id);
+      }
+      setLecture(res);
+    }
+  }, [selectedManga, isInProgress, fetchChapterById, startNewLecture]);
+
+  // Ahora sí: loadData usando useCallback
+  const loadData = useCallback(async () => {
+    try {
+      setLoading(true);
+      await Promise.all([
+        checkIsInFavorites(),
+        checkIsReadInProgress(),
+        getVolumes(),
+      ]);
+    } catch (e) {
+      console.error("Error loading manga data:", e);
+    } finally {
+      setLoading(false);
+    }
+  }, [checkIsInFavorites, checkIsReadInProgress, getVolumes]);
+
   // Obtener volumenes al renderizar
-  useEffect(() => {
-    const getVolumes = async () => {
-      try {
-        await fetchVolumesByMangaId(mangaId);
-      } catch (e) {
-        console.error("Error fetching mangas:", e);
-      }
-    };
-    getVolumes();
-  }, []);
-  
+ // useEffect correcto
+ useEffect(() => {
+  loadData();
+}, [loadData]);
 
-  //Verificamos si ya haba leido o no
-  useEffect(() => {
-    const checkIsReadInProgress = async () => {
-      if (selectedManga) {
-        const res = await isInProgress(selectedManga.id);
-        if(res!=null){
-          await fetchChapterById(res.chapterId);
 
-        }else{
-          await startNewLecture(selectedManga.id);
-        }
-        setLecture(res)
-       ;
-      }
-    };
-    checkIsReadInProgress();
-  }, [selectedManga]);
-
-    //Verificamos el estado inicial de si es favorito o no
-    useEffect(() => {
-      const checkIsInFavorites = async () => {
-        if (selectedManga) {
-          const res = await likeStatus(selectedManga.id);
-          console.log("Like status del useEffect", res)
-
-          if(res!=null){
-            setIsFavorite(res)
-          }
-         ;
-        }
-      };
-      checkIsInFavorites();
-    }, []);//Se ejecuta una ves.
 
   const handleRead = async () => {
-    // lógica para continuar o comenzar lectura
-    router.push(`/(app)/reader/newRead`);
-    
+    router.push(`/(app)/reader/newRead`);    
   };
 
   const handleFavoriteTouch = async () => {
     
    await toggleLike(selectedManga?.id as string,isFavorite);
    const res = await likeStatus(selectedManga?.id as string);
-   console.log("Respuesta de like status",res)
     setIsFavorite(res)
   };
 
@@ -139,7 +136,7 @@ const MangaDetailScreen = () => {
           onPress={handleFavoriteTouch}
           className="bg-neutral-800 p-4 rounded-full shadow-sm"
         >
-          {userLoading?(
+          {loading?(
             <SmallSpinner/>
           ):(<FontAwesome
             name="heart"
