@@ -180,7 +180,7 @@ export const createContentSlice: StateCreator<ContentSlice> = (set,get) => ({
     set({ loading: true, error: null });
     try {
       const data = await getAllChapterByMangaId(mangaId);
-      set({ chapters: data.data });
+      set({ chapters: sortChaptersAscending(data.data)});
     } catch (err) {
       if (err instanceof ApiException) set({ error: err });
       else console.error("[contentSlice] Error cargando páginas:", err);

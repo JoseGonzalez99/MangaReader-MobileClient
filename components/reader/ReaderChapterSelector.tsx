@@ -32,7 +32,7 @@ const ReaderChapterSelector = () => {
 			keyExtractor={(item) => item.id.toString()}
 			showsVerticalScrollIndicator={false}
 			contentContainerStyle={{
-				paddingBottom: 20,
+				paddingBottom: 60,
 				paddingTop: 10,
 			}}
 			ListHeaderComponent={

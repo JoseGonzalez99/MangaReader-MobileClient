@@ -3,18 +3,16 @@ import { Image, Text, View } from 'react-native'
 
 interface AppLogoProps {
   imageUrl: any
-  subText: string
 }
 
-const AppLogo = ({ imageUrl, subText }: AppLogoProps) => {
+const AppLogo = ({ imageUrl }: AppLogoProps) => {
   return (
-    <View className="items-center justify-center p-5">
+    <View className="items-center justify-center p-2">
       <Image
         source={imageUrl}
         className="w-[250px] h-[250px] mb-0"
         resizeMode="contain"
       />
-      <Text className="text-text text-4xl font-bold">{subText}</Text>
     </View>
   )
 }

@@ -14,7 +14,7 @@ const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 interface BottomDrawerProps {
   isVisible: boolean;
   onClose: () => void;
-  title:string;
+  title: string;
   children: React.ReactNode;
   scrollable?: boolean;
 }
@@ -24,7 +24,7 @@ const BottomDrawer = ({
   onClose,
   children,
   scrollable,
-  title
+  title,
 }: BottomDrawerProps) => {
   const [visible, setVisible] = useState(isVisible);
   const slideAnim = useState(new Animated.Value(SCREEN_HEIGHT))[0];
@@ -52,7 +52,12 @@ const BottomDrawer = ({
   if (!visible) return null;
 
   return (
-    <Modal transparent animationType="none" visible={visible} onRequestClose={onClose}>
+    <Modal
+      transparent
+      animationType="none"
+      visible={visible}
+      onRequestClose={onClose}
+    >
       <TouchableWithoutFeedback onPress={onClose}>
         <View className="flex-1 bg-black/50" />
       </TouchableWithoutFeedback>
@@ -65,9 +70,11 @@ const BottomDrawer = ({
         className="absolute bottom-0 left-0 right-0 bg-secondary rounded-t-2xl px-5 pt-4 pb-6"
       >
         {/* Handle visual */}
-        <View className="w-12 h-1.5 bg-white/30 rounded-full mx-auto mb-3" />
-		<Text className="text-2xl text-center text-white font-bold mb-4">{title}</Text>
-		
+        <View className="w-12 h-1.5 bg-white/30 rounded-full mx-auto mb-5" />
+        <Text className="text-2xl text-center text-white font-bold mb-4">
+          {title}
+        </Text>
+
         {scrollable ? (
           <ScrollView
             showsVerticalScrollIndicator={false}
@@ -76,10 +83,7 @@ const BottomDrawer = ({
             {children}
           </ScrollView>
         ) : (
-			
-				<View>{children}</View>
-			
-         
+          <View>{children}</View>
         )}
       </Animated.View>
     </Modal>

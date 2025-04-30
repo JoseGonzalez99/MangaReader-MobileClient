@@ -1,50 +1,29 @@
-# Welcome to your Expo app 👋
+# 📖 MangaJReader
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+MangaJReader es una aplicación desarrollada con React Native + Expo diseñada para ofrecer una experiencia cómoda y fluida de lectura de mangas y cómics desde dispositivos móviles.
 
-## Get started
+![MangaJReader Splash](./assets/images/splash-icon.png)
 
-1. Install dependencies
+## ✨ Características
 
-   ```bash
-   npm install
-   ```
+- 🧠 Estado global con **Zustand**
+- 🎨 Estilos con **NativeWind (Tailwind para React Native)**
+- 🔀 Navegación avanzada con **Expo Router**
+- 🔒 Autenticación con **Google Sign-In**
+- ⭐ Agrega mangas a favoritos
+- 🔄 Cambia la dirección de lectura (izquierda a derecha o derecha a izquierda)
+- 🧘‍♂️ Modo enfoque: oculta los controles para una experiencia de lectura limpia
 
-2. Start the app
+## 🎥 Vista previa
 
-   ```bash
-    npx expo start
-   ```
+![Demo de MangaJReader](./assets//examples//Editado.gif)
 
-In the output, you'll find options to open the app in a
+## 🚀 Instalación
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+> Requisitos: Tener instalado [Node.js](https://nodejs.org/), [Expo CLI](https://docs.expo.dev/get-started/installation/), y un emulador Android/iOS o la app Expo Go en tu dispositivo.
 
 ```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+git clone git@github.com:JoseGonzalez99/MangaReader-MobileClient.git
+cd MangaReader-MobileClient
+npm install
+npx expo start

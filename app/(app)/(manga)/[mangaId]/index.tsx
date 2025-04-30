@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity, FlatList, ScrollView } from "react-native";
+import { View, Text, Image, TouchableOpacity, FlatList, ScrollView, ActivityIndicator } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { useCallback, useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
@@ -169,22 +169,32 @@ const MangaDetailScreen = () => {
       {/* Volúmenes */}
       <View className="mt-4 px-2">
         <Text className="text-white text-2xl font-bold mb-4">Volúmenes</Text>
-        <FlatList
-          data={volumesOfSelectedManga}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              activeOpacity={0.85}
-              onPress={() => handleVolumenTouch(item)}
-              className="mr-4"
-            >
-              <SmallCoverCard title={item.title} image={item.coverUrl} />
-            </TouchableOpacity>
-          )}
-          contentContainerStyle={{ paddingBottom: 20 }}
-        />
+        
+        {loading ? (
+                <View className="flex-1 justify-center items-center mt-20">
+                  <ActivityIndicator size="large" color="#ffffff" />
+                  <Text className="text-white mt-4">Cargando volumenes...</Text>
+                </View>
+              ) : (
+                <FlatList
+                data={volumesOfSelectedManga}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    activeOpacity={0.85}
+                    onPress={() => handleVolumenTouch(item)}
+                    className="mr-4"
+                  >
+                    <SmallCoverCard title={item.title} image={item.coverUrl} />
+                  </TouchableOpacity>
+                )}
+                contentContainerStyle={{ paddingBottom: 20 }}
+              />
+              )}
+        
+
       </View>
     </ScrollView>
   );

@@ -16,7 +16,7 @@ export default function LoginScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <View className="flex-1  justify-center py-10 px-4">
-          <AppLogo imageUrl={logo} subText="JMangaReader" />
+          <AppLogo imageUrl={logo} />
           <LoginForm />
         </View>
       </ScrollView>
